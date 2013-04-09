@@ -11,12 +11,12 @@
 	<input type="file"/>
 	<canvas></canvas>
 	<script>
-		document.querySelector("input").addEventListener("change", function(e) {
-			Photo.fromFile(e.target.files[0]).then(function(photo) {
-				return new Operation.Invert().setSource(photo.getCanvas()).go();
-			}).then(function(invert) {
-				document.body.appendChild(invert.getTarget());
-			});
+		Promise.event(document.querySelector("input"), "change").then(function(e) {
+			return Photo.fromFile(e.target.files[0]);
+		}).then(function(photo) {
+			return new Operation.Invert().setSource(photo.getCanvas()).go();
+		}).then(function(invert) {
+			document.body.appendChild(invert.getTarget());
 		});
 	</script>
 </body>
