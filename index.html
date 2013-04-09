@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+	<script src="js/promise.js"></script>
+	<script src="js/photo.js"></script>
+	<script src="js/operation.js"></script>
+</head>
+<body>
+	<input type="file"/>
+	<canvas></canvas>
+	<script>
+		document.querySelector("input").addEventListener("change", function(e) {
+			Photo.fromFile(e.target.files[0]).then(function(photo) {
+				photo.drawTo(document.querySelector("canvas"));
+			});
+		});
+	</script>
+</body>
+</html>
