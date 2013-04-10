@@ -1,20 +1,14 @@
-Operation.Invert = function() {
-	Operation.call(this);
+Operation.Invert = function(options) {
+	Operation.call(this, options);
 }
 Operation.Invert.prototype = Object.create(Operation.prototype);
 
-Operation.Invert.prototype.go = function(data) {
-	var promise = Operation.prototype.go.call(this, data);
-
-	var w = data.width;
-	var h = data.height;
-	var worker = new Worker("worker.js");
-	worker.postMessage({method:"invert", args:[data]});
-
-	Promise.event(worker, "message").then(function(e) {
-		debugger;
-		promise.fulfill(e.data);
-	});
-	
+Operation.Invert.prototype.go = function(canvas) {
+	var promise = Operation.prototype.go.call(this, canvas);
+	var id = App.canvasToImageData(canvas);
+	Promise.worker("worker.js", {method:"invert", args:[id]}).then(function(id) {
+		this._canvas = App.imageDataToCanvas(id);
+		promise.fulfill(this._canvas);
+	}.bind(this));
 	return promise;
 }

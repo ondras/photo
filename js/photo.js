@@ -1,5 +1,7 @@
 var Photo = function(canvas) {
-	this._canvas = canvas;
+	this._canvas = canvas; /* original image data */
+	this._operations = [];
+	this._operationIndex = -1;
 }
 
 Photo.fromFile = function(file) {
@@ -19,13 +21,24 @@ Photo.fromFile = function(file) {
 		promise.fulfill(new Photo(canvas));
 	});
 	fr.readAsDataURL(file);
+
 	return promise;
 }
 
-Photo.prototype.drawTo = function(canvas) {
-	canvas.getContext("2d").drawImage(this._canvas, 0, 0, canvas.width, canvas.height);
+Photo.prototype.drawPreview = function() {
+	var source = this.getCanvas();
+	var target = Preview.getCanvas();
+	target.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
 }
 
-Photo.prototype.getData = function() {
-	return this._canvas.getContext("2d").getImageData(0, 0, this._canvas.width, this._canvas.height);
+Photo.prototype.getCanvas = function() {
+	return (this._operationIndex > -1 ? this._operations[this._operationIndex].getCanvas() : this._canvas);
+}
+
+Photo.prototype.addOperation = function(operation) {
+	operation.go(this.getCanvas()).then(function() {
+		this._operations.push(operation);
+		this._operationIndex++;
+		this.drawPreview();
+	}.bind(this));
 }
