@@ -6,12 +6,15 @@
 	<script src="js/app.js"></script>
 	<script src="js/preview.js"></script>
 	<script src="js/photo.js"></script>
-	<script src="js/operation.js"></script>
-	<script src="js/operation-invert.js"></script>
-	<script src="js/operation-linear.js"></script>
+	<script src="js/action.js"></script>
+	<script src="js/action-invert.js"></script>
+	<script src="js/action-linear.js"></script>
+	<script src="js/action-load.js"></script>
 </head>
 <body>
+	<div id="config"></div>
 	<select id="operation" size="3">
+		<option value="" selected="selected">(pick operation)</option>
 		<option value="invert">Invert</option>
 		<option value="linear">Linear</option>
 	</select>
@@ -20,6 +23,7 @@
 	<select id="history"></select>
 
 	<input type="file" id="load" />
+	<br/>
 	<script>
 		App.init();
 	</script>

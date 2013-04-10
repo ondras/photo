@@ -1,7 +1,8 @@
 var Photo = function(canvas) {
 	this._canvas = canvas; /* original image data */
-	this._operations = [];
-	this._operationIndex = -1;
+	this._previewCanvas = null; /* original image data */
+	this._actions = [];
+	this._actionIndex = -1;
 }
 
 Photo.fromFile = function(file) {
@@ -28,17 +29,27 @@ Photo.fromFile = function(file) {
 Photo.prototype.drawPreview = function() {
 	var source = this.getCanvas();
 	var target = Preview.getCanvas();
-	target.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
+
+	this._previewCanvas = document.createElement("canvas");
+	this._previewCanvas = target.width;
+	this._previewCanvas = target.height;
+	this._previewCanvas.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
+
+	target.getContext("2d").drawImage(this._previewCanvas, 0, 0);
 }
 
 Photo.prototype.getCanvas = function() {
-	return (this._operationIndex > -1 ? this._operations[this._operationIndex].getCanvas() : this._canvas);
+	return (this._actionIndex > -1 ? this._actions[this._actionIndex].getCanvas() : this._canvas);
 }
 
-Photo.prototype.addOperation = function(operation) {
-	operation.go(this.getCanvas()).then(function() {
-		this._operations.push(operation);
-		this._operationIndex++;
+Photo.prototype.getPreviewCanvas = function() {
+	return this._previewCanvas;
+}
+
+Photo.prototype.addAction = function(action) {
+	action.go(this.getCanvas()).then(function() {
+		this._actions.push(action);
+		this._actionIndex++;
 		this.drawPreview();
 	}.bind(this));
 }

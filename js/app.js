@@ -1,5 +1,6 @@
 var App = {
-	photo: null,
+	_photo: null,
+	_
 	
 	init: function() {
 		document.body.appendChild(Preview.getCanvas());
@@ -9,11 +10,12 @@ var App = {
 		Promise.event(load, "change").then(function(e) {
 			return Photo.fromFile(e.target.files[0]);
 		}).then(function(photo) {
-			this.photo = photo;
-			photo.drawPreview()
+			this._photo = photo;
+			photo.drawPreview();
 		}.bind(this));
 
-		document.querySelector("#apply").addEventListener("click", this._clickApply.bind(this));
+		document.querySelector("operation").addEventListener("change", this._changeOperation.bind(this));
+//		document.querySelector("#apply").addEventListener("click", this._clickApply.bind(this));
 	},
 
 	canvasToImageData: function(canvas) {
@@ -28,16 +30,21 @@ var App = {
 		return canvas;
 	},
 
+	_changeOperation: function(e) {
+		var name = document.querySelector("#operation").value;
+		if (!name) { return; }
+		var obj = Operation[name.charAt(0).toUpperCase() + name.substring(1)];
+		this._config.innerHTML = "";
+		obj.showUI(this._config);
+
+	},
+
 	_clickApply: function(e) {
 		var name = document.querySelector("#operation").value;
 		if (!name) { return; }
 		var obj = Operation[name.charAt(0).toUpperCase() + name.substring(1)];
 		var inst = new obj();
 
-		this.photo.addOperation(inst);
-	},
-
-	_operationDone: function(canvas) {
-		Preview.setData(data);
+		this._photo.addOperation(inst);
 	}
 }
