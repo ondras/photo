@@ -3,20 +3,22 @@
 <head>
 	<script src="js/promise.js"></script>
 	<script src="js/promise-addons.js"></script>
+	<script src="js/preview.js"></script>
 	<script src="js/photo.js"></script>
 	<script src="js/operation.js"></script>
 	<script src="js/operation-invert.js"></script>
 </head>
 <body>
 	<input type="file"/>
-	<canvas></canvas>
 	<script>
+		document.body.appendChild(Preview.getCanvas());
+
 		Promise.event(document.querySelector("input"), "change").then(function(e) {
 			return Photo.fromFile(e.target.files[0]);
 		}).then(function(photo) {
-			return new Operation.Invert().setSource(photo.getCanvas()).go();
-		}).then(function(invert) {
-			document.body.appendChild(invert.getTarget());
+			return new Operation.Invert().go(photo.getData());
+		}).then(function(data) {
+			Preview.setData(data);
 		});
 	</script>
 </body>

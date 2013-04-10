@@ -26,6 +26,6 @@ Photo.prototype.drawTo = function(canvas) {
 	canvas.getContext("2d").drawImage(this._canvas, 0, 0, canvas.width, canvas.height);
 }
 
-Photo.prototype.getCanvas = function() {
-	return this._canvas;
+Photo.prototype.getData = function() {
+	return this._canvas.getContext("2d").getImageData(0, 0, this._canvas.width, this._canvas.height);
 }
