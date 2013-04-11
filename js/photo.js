@@ -1,6 +1,6 @@
 var Photo = function(canvas) {
 	this._canvas = canvas; /* original image data */
-	this._previewCanvas = null; /* original image data */
+	this._previewCanvas = null; /* final preview */
 	this._actions = [];
 	this._actionIndex = -1;
 }
@@ -31,25 +31,43 @@ Photo.prototype.drawPreview = function() {
 	var target = Preview.getCanvas();
 
 	this._previewCanvas = document.createElement("canvas");
-	this._previewCanvas = target.width;
-	this._previewCanvas = target.height;
+	this._previewCanvas.width = target.width;
+	this._previewCanvas.height = target.height;
 	this._previewCanvas.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
 
 	target.getContext("2d").drawImage(this._previewCanvas, 0, 0);
 }
 
 Photo.prototype.getCanvas = function() {
+	/* fixme private? */
 	return (this._actionIndex > -1 ? this._actions[this._actionIndex].getCanvas() : this._canvas);
 }
 
-Photo.prototype.getPreviewCanvas = function() {
+Photo.prototype.getPreviewCanvas = function(forAction) {
+	/* FIXME forAction */
 	return this._previewCanvas;
 }
 
-Photo.prototype.addAction = function(action) {
-	action.go(this.getCanvas()).then(function() {
-		this._actions.push(action);
-		this._actionIndex++;
-		this.drawPreview();
-	}.bind(this));
+Photo.prototype.setAction = function(action) {
+	var index = this._actions.indexOf(action);
+	if (index == -1) { /* new action */
+		action.go(this.getCanvas()).then(function() {
+			this._actions.push(action);
+			this._actionIndex++;
+			App.resetAction();
+
+			var o = document.createElement("option");
+			o.innerHTML = action.getName();
+			document.querySelector("#history").appendChild(o);
+
+
+		}.bind(this));
+
+	} else { /* modification of an old action */
+
+	}
+}
+
+Photo.prototype.getAction = function(index) {
+	return this._actions[index];
 }

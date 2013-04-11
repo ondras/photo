@@ -7,23 +7,29 @@
 	<script src="js/preview.js"></script>
 	<script src="js/photo.js"></script>
 	<script src="js/action.js"></script>
+	<script src="js/action-open.js"></script>
 	<script src="js/action-invert.js"></script>
 	<script src="js/action-linear.js"></script>
-	<script src="js/action-load.js"></script>
+	<script src="js/ui.js"></script>
+	<script src="js/ui-open.js"></script>
+	<script src="js/ui-invert.js"></script>
+	<script src="js/ui-linear.js"></script>
 </head>
 <body>
-	<div id="config"></div>
-	<select id="operation" size="3">
-		<option value="" selected="selected">(pick operation)</option>
-		<option value="invert">Invert</option>
-		<option value="linear">Linear</option>
-	</select>
-	<input type="button" id="apply" value="Apply" />
+	<div id="tools">
+		<select id="actions" size="3">
+			<option value="" selected="selected">(pick operation)</option>
+			<option value="open">Open image</option>
+			<option value="invert">Invert</option>
+			<option value="linear">Linear</option>
+		</select>
+		<select id="history" size="3">
+		</select>
+		<div id="config"></div>
+	</div>
 
-	<select id="history"></select>
+	<div id="preview"></div>
 
-	<input type="file" id="load" />
-	<br/>
 	<script>
 		App.init();
 	</script>

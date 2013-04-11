@@ -1,5 +1,5 @@
-Action.Linear = function(options) {
-	Action.call(this, options);
+Action.Linear = function() {
+	Action.call(this);
 }
 Action.Linear.prototype = Object.create(Action.prototype);
 

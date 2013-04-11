@@ -101,7 +101,7 @@ Promise.prototype._executeCallback = function(cb) {
 		}
 
 	} catch (e) {
-
+debugger;
 		/* 3.2.6.2. If either onFulfilled or onRejected throws an exception, promise2 must be rejected with the thrown exception as the reason. */
 		thenPromise.reject(e); 
 

@@ -1,21 +1,20 @@
 var App = {
-	_photo: null,
-	_
+	photo: null,
+	_config: null,
+	_actions: null,
 	
 	init: function() {
-		document.body.appendChild(Preview.getCanvas());
+		this._config = document.querySelector("#config");
+		this._actions = document.querySelector("#actions");
 
-		var load = document.querySelector("input[type=file]");
+		document.querySelector("#preview").appendChild(Preview.getCanvas());
+		this._actions.addEventListener("change", this._changeAction.bind(this));
+		this._actions.selectedIndex = 0;
+	},
 
-		Promise.event(load, "change").then(function(e) {
-			return Photo.fromFile(e.target.files[0]);
-		}).then(function(photo) {
-			this._photo = photo;
-			photo.drawPreview();
-		}.bind(this));
-
-		document.querySelector("operation").addEventListener("change", this._changeOperation.bind(this));
-//		document.querySelector("#apply").addEventListener("click", this._clickApply.bind(this));
+	setPhoto: function(photo) {
+		this.photo = photo;
+		photo.drawPreview();
 	},
 
 	canvasToImageData: function(canvas) {
@@ -30,21 +29,27 @@ var App = {
 		return canvas;
 	},
 
-	_changeOperation: function(e) {
-		var name = document.querySelector("#operation").value;
-		if (!name) { return; }
-		var obj = Operation[name.charAt(0).toUpperCase() + name.substring(1)];
+	resetAction: function(e) {
+		this._actions.selectedIndex = 0;
 		this._config.innerHTML = "";
-		obj.showUI(this._config);
-
+		if (this.photo) { this.photo.drawPreview(); }
 	},
 
-	_clickApply: function(e) {
-		var name = document.querySelector("#operation").value;
-		if (!name) { return; }
-		var obj = Operation[name.charAt(0).toUpperCase() + name.substring(1)];
-		var inst = new obj();
+	_changeAction: function(e) {
+		this._config.innerHTML = "";
+		if (this.photo) { this.photo.drawPreview(); }
 
-		this._photo.addOperation(inst);
+		var name = e.target.value;
+		if (!name) { return; }
+		name = this._capitalize(name);
+
+		var action = new Action[name]();
+		var ui = new UI[name](action);
+		ui.show(this._config);
+	},
+
+	_capitalize: function(str) {
+		return str.charAt(0).toUpperCase() + str.substring(1);
 	}
+
 }
