@@ -1,20 +1,29 @@
 var Photo = function(canvas) {
 	this._canvases = [canvas];
-	this._previewCanvas = null; /* final preview */
+	this._lastPreviewCanvas = null; /* final preview */
 	this._actions = [];
 }
 
-Photo.prototype.drawPreview = function() {
-	var source = this._canvases[this._canvases.length-1];
+Photo.prototype.drawPreview = function(index) {
+	if (arguments.length == 0) { index = this._canvases.length-1; }
+	var source = this._canvases[index];
 
-	this._previewCanvas = this._createPreviewCanvas(source);
+	if (arguments.length == 0) {
+		if (!this._lastPreviewCanvas) {
+			this._lastPreviewCanvas = this._createPreviewCanvas(source);
+		}
+		var canvas = this._lastPreviewCanvas;
+	} else {
+		var canvas = this._createPreviewCanvas(source);
 
-	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
+	}
+
+	Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
 }
 
 Photo.prototype.getPreviewCanvas = function(forAction) {
 	var index = this._actions.indexOf(forAction);
-	if (index == -1) { return this._previewCanvas; }
+	if (index == -1) { return this._lastPreviewCanvas; }
 
 	var largeCanvas = this._getCanvas(forAction);
 	return this._createPreviewCanvas(largeCanvas);
@@ -23,17 +32,13 @@ Photo.prototype.getPreviewCanvas = function(forAction) {
 Photo.prototype.setAction = function(action) {
 	var index = this._actions.indexOf(action);
 	if (index == -1) { /* new action */
+
 		var canvas = this._getCanvas(action);
 		action.go(canvas).then(function(canvas) {
 			this._actions.push(action);
 			this._canvases.push(canvas);
-			App.resetSelects();
-
-			var o = document.createElement("option");
-			o.innerHTML = action.getName();
-			document.querySelector("#history").appendChild(o);
-
-
+			this._lastPreviewCanvas = null; /* invalidate last preview */
+			App.addHistory(action);
 		}.bind(this));
 
 	} else { /* modification of an old action */

@@ -1,6 +1,7 @@
 var Action = function() {
 	this._options = this._defaultOptions();
 	this._name = "";
+	this._throbber = "";
 }
 
 Action.prototype.getName = function() {
@@ -26,8 +27,10 @@ Action.prototype._defaultOptions = function() {
 }
 
 Action.prototype._runInWorker = function(promise, data) {
+	App.showThrobber(this._throbber);
 	Promise.worker("worker.js", data).then(function(id) {
 		var canvas = App.imageDataToCanvas(id);
+		App.hideThrobber();
 		promise.fulfill(canvas);
 	}.bind(this));
 }

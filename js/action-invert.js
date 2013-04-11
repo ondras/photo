@@ -1,6 +1,7 @@
 Action.Invert = function(options) {
 	Action.call(this, options);
 	this._name = "Invert";
+	this._throbber = "Inverting...";
 }
 Action.Invert.prototype = Object.create(Action.prototype);
 

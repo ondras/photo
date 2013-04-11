@@ -11,18 +11,45 @@ var App = {
 		this._actions = document.querySelector("#actions");
 		this._history = document.querySelector("#history");
 		this._preview = document.querySelector("#preview");
+		this._throbber = document.querySelector("#throbber");
 
-		this.resetSelects();
-
+		this._actions.selectedIndex = 0;
 		this._actions.addEventListener("change", this._changeAction.bind(this));
+		var options = this._actions.querySelectorAll("option");
+		for (var i=2;i<options.length;i++) { options[i].disabled = true; }
+
+		this._history.selectedIndex = -1;
 		this._history.addEventListener("change", this._changeHistory.bind(this));
 
 		this._preview.appendChild(Preview.getCanvas());
+
+		this.hideThrobber();
+	},
+
+	showThrobber: function(label) {
+		this._throbber.innerHTML = label;
+		this._throbber.style.display = "";
+	},
+
+	hideThrobber: function() {
+		this._throbber.style.display = "none";
 	},
 
 	setPhoto: function(photo) {
+		/* fixme existing photo */
 		this.photo = photo;
+		var options = this._actions.querySelectorAll("option");
+		for (var i=2;i<options.length;i++) { options[i].disabled = false; }
 		photo.drawPreview();
+	},
+
+	addHistory: function(action) {
+		var o = document.createElement("option");
+		o.innerHTML = action.getName();
+		this._history.appendChild(o);
+		this._config.innerHTML = "";
+		this._actions.selectedIndex = 0;
+		this.photo.drawPreview();
 	},
 
 	canvasToImageData: function(canvas) {
@@ -37,23 +64,12 @@ var App = {
 		return canvas;
 	},
 
-	resetSelects: function(e) {
-		this._actions.selectedIndex = -1;
-		this._history.selectedIndex = -1;
-		this._config.innerHTML = "";
-
-		if (this.photo) { this.photo.drawPreview(); }
-	},
-
 	_changeAction: function(e) { /* pick a new action to preview & perform */
-		if (e.target.selectedIndex == 0) { 
-			this.resetSelects();
-			return;
-		}
-
 		this._history.selectedIndex = -1;
 		this._config.innerHTML = "";
-		if (this.photo) { this.photo.drawPreview(); }
+		if (this.photo) { this.photo.drawPreview(); } /* draw last preview */
+
+		if (e.target.selectedIndex == 0) { return; }
 
 		var name = e.target.value;
 		if (!name) { return; }
@@ -65,12 +81,14 @@ var App = {
 	},
 
 	_changeHistory: function(e) { /* pick a history item */
-		if (e.target.selectedIndex == 0) { 
-			this.resetSelects();
+		this._actions.selectedIndex = 0;
+		if (this.photo) { this.photo.drawPreview(e.target.selectedIndex); } /* draw history preview */
+
+		if (e.target.selectedIndex == 0) {
+			this._config.innerHTML = "";
 			return;
 		}
 
-		this._actions.selectedIndex = -1;
 		var action = this.photo.getAction(e.target.selectedIndex-1); /* first is label */
 
 		/* fixme bad practice */

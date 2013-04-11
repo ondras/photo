@@ -12,6 +12,8 @@ UI.Open.prototype.show = function(parent) {
 	UI.prototype.show.call(this, parent);
 
 	parent.appendChild(this._input);
+
+	/* FIXME does not reset preview */
 }
 
 UI.Open.prototype.handleEvent = function(e) {

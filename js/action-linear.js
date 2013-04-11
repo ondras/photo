@@ -1,6 +1,7 @@
 Action.Linear = function() {
 	Action.call(this);
 	this._name = "Linear";
+	this._throbber = "Linear...";
 }
 Action.Linear.prototype = Object.create(Action.prototype);
 

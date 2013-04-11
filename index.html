@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
 <head>
+	<meta charset="utf-8" />
+	<title>Online photo editor</title>
 	<script src="js/promise.js"></script>
 	<script src="js/promise-addons.js"></script>
 	<script src="js/app.js"></script>
@@ -14,22 +16,23 @@
 	<script src="js/ui-open.js"></script>
 	<script src="js/ui-invert.js"></script>
 	<script src="js/ui-linear.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 	<div id="tools">
-		<select id="actions" style="height:200px" size="2">
-			<option value="">Available operations</option>
+		<select id="actions" size="2">
+			<option value="">Available actions</option>
 			<option value="open">Open image</option>
 			<option value="invert">Invert</option>
 			<option value="linear">Linear</option>
-		</select>
-		<select id="history" style="height:200px" size="2">
+		</select><select id="history" size="2">
 			<option value="">History</option>
 		</select>
 		<div id="config"></div>
 	</div>
 
 	<div id="preview"></div>
+	<div id="throbber"></div>
 
 	<script>
 		App.init();

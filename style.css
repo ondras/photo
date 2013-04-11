@@ -1,0 +1,53 @@
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+#tools {
+	float: left;
+	width: 350px;
+	height: 100%;
+}
+
+#tools select {
+	width: 50%;
+	height: 50%;
+	display: inline-block;
+	
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#tools select option {
+	font-size: 14px;
+	padding: 2px 4px;
+}
+
+#tools select option:first-child {
+	font-weight: bold;
+	text-align: center;
+	font-size: 16px;
+}
+
+#tools select#history option + option {
+	counter-increment: history;
+}
+
+#tools select#history option + option:before {
+	content: counter(history) ". ";
+}
+
+#config {
+	padding: 1em;
+}
+
+#preview {
+	margin-left: 350px;
+	height: 100%;
+}
+
+#throbber {
+	position: fixed;
+	left: 10px;
+	bottom: 10px;
+}

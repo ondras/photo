@@ -6,6 +6,8 @@ Action.Open.prototype = Object.create(Action.prototype);
 Action.Open.prototype.go = function(file) {
 	var promise = Action.prototype.go.call(this);
 
+	App.showThrobber("Loading local image...");
+
 	var fr = new FileReader();
 	Promise.event(fr, "load").then(function(e) {
 		var img = document.createElement("img");
@@ -17,6 +19,7 @@ Action.Open.prototype.go = function(file) {
 		canvas.height = e.target.height;
 		var context = canvas.getContext("2d");
 		context.drawImage(e.target, 0, 0, canvas.width, canvas.height);
+		App.hideThrobber();
 		promise.fulfill(new Photo(canvas));
 	});
 	fr.readAsDataURL(file);
