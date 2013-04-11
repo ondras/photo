@@ -1,5 +1,5 @@
 UI.Open = function(action) {
-	UI.call(this, action);
+	UI.call(this, action, null);
 
 	this._input = document.createElement("input");
 	this._input.type = "file";
@@ -12,8 +12,6 @@ UI.Open.prototype.show = function(parent) {
 	UI.prototype.show.call(this, parent);
 
 	parent.appendChild(this._input);
-
-	/* FIXME does not reset preview */
 }
 
 UI.Open.prototype.handleEvent = function(e) {

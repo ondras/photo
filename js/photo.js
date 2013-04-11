@@ -1,79 +1,94 @@
 var Photo = function(canvas) {
 	this._canvases = [canvas];
-	this._lastPreviewCanvas = null; /* final preview */
+	this._historyIndex = 0; /* -1 = last; >-1 = after that many actions */
+	this._previewCanvas = null;
 	this._actions = [];
+	
+	
+	
+	this._historySelect = document.createElement("select");
+	this._historySelect.size = 2;
+	this._historySelect.className = "history";
+	var o = document.createElement("option");
+	o.innerHTML = "History";
+	this._historySelect.appendChild(o);
+	this._historySelect.addEventListener("change", this);
+	
+	this.setHistoryIndex();
 }
 
-Photo.prototype.drawPreview = function(index) {
-	if (arguments.length == 0) { index = this._canvases.length-1; }
-	var source = this._canvases[index];
-
-	if (arguments.length == 0) {
-		if (!this._lastPreviewCanvas) {
-			this._lastPreviewCanvas = this._createPreviewCanvas(source);
-		}
-		var canvas = this._lastPreviewCanvas;
-	} else {
-		var canvas = this._createPreviewCanvas(source);
-
-	}
-
-	Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
+Photo.prototype.handleEvent = function(e) {
+	App.resetActions();
+	this.setHistoryIndex(e.target.selectedIndex);
 }
 
-Photo.prototype.getPreviewCanvas = function(forAction) {
-	var index = this._actions.indexOf(forAction);
-	if (index == -1) { return this._lastPreviewCanvas; }
+Photo.prototype.getCanvas = function() {
+	return this._canvases[Math.max(0, this._historyIndex-2)];
+}
 
-	var largeCanvas = this._getCanvas(forAction);
-	return this._createPreviewCanvas(largeCanvas);
+Photo.prototype.getPreviewCanvas = function() {
+	return this._previewCanvas;
+}
+
+Photo.prototype.getHistorySelect = function() {
+	return this._historySelect;
 }
 
 Photo.prototype.setAction = function(action) {
-	this._lastPreviewCanvas = null; /* invalidate last preview */
+	action.go(this.getCanvas()).then(function(canvas) {
 
-	var canvas = this._getCanvas(action);
+		if (this._historyIndex == -1) { /* new action */
+		
+			this._addHistory(action, canvas);
 
-	action.go(canvas).then(function(canvas) {
-		var index = this._actions.indexOf(action);
-
-		if (index == -1) { /* new action */
-			this._actions.push(action);
-			this._canvases.push(canvas);
-			App.addHistory(action);
 		} else { /* modification of an existing action */
 
-			this._canvases[index+1] = canvas;
-			if (index+1 == this._actions.length) { /* was last */
-				App.resetHistory();
-			} else { /* not last, continue */
-				this.setAction(this._actions[index+1]);
+			this._canvases[this._historyIndex-1] = canvas;
+			this.setHistoryIndex(this._historyIndex+1);
+			if (this._historyIndex < this._actions.length) { /* not last, continue */
+				this.setAction(this._actions[this._historyIndex]);
 			}
 
 		}
-
 	}.bind(this));
 }
 
-Photo.prototype.getAction = function(index) {
-	return this._actions[index];
+Photo.prototype.setHistoryIndex = function(index) {
+	this._historyIndex = index;
+	this._historySelect.selectedIndex = index;
+	
+	this._createPreviewCanvas();
+	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
+
+	if (index < 1) { return; }
+
+	var action = this._actions[index-1];
+	var name = "";
+	for (var p in Action) { /* fixme bad practice */
+		if (action instanceof Action[p]) { name = p; }
+	}
+	var ui = new UI[name](action, this);
+	App.showUI(ui);
 }
 
-/**
- * Get full source canvas for a given action
- */
-Photo.prototype._getCanvas = function(forAction) {
-	var index = this._actions.indexOf(forAction);
-	return this._canvases[index == -1 ? this._canvases.length-1 : index];
+Photo.prototype._addHistory = function(action, canvas) {
+	this._actions.push(action);
+	this._canvases.push(canvas);
+
+	var o = document.createElement("option");
+	o.innerHTML = action.getName();
+	this._historySelect.appendChild(o);
+	
+	App.resetActions();
 }
 
-Photo.prototype._createPreviewCanvas = function(canvas) {
+Photo.prototype._createPreviewCanvas = function() {
+	var source = this.getCanvas();
 	var target = Preview.getCanvas();
 
-	var result = document.createElement("canvas");
-	result.width = target.width;
-	result.height = target.height;
-	result.getContext("2d").drawImage(canvas, 0, 0, result.width, result.height);
-
-	return result;
+	this._previewCanvas = document.createElement("canvas");
+	this._previewCanvas.width = target.width;
+	this._previewCanvas.height = target.height;
+	this._previewCanvas.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
 }
+

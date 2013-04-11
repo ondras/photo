@@ -1,11 +1,10 @@
-var UI = function(action) {
+var UI = function(action, photo) {
 	this._action = action;
-	this._previewCanvas = null;
+	this._photo = photo;
 }
 
 UI.prototype.show = function(parent) {
 	parent.innerHTML = "";
-	if (App.photo) { this._previewCanvas = App.photo.getPreviewCanvas(this._action); }
 }
 
 UI.prototype._buildApply = function() {
@@ -16,7 +15,7 @@ UI.prototype._buildApply = function() {
 }
 
 UI.prototype._preview = function() {
-	this._action.go(this._previewCanvas).then(function(canvas) {
+	this._action.go(this._photo.getPreviewCanvas()).then(function(canvas) {
 		Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
 	});
 }

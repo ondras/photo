@@ -1,5 +1,5 @@
-UI.Invert = function(action) {
-	UI.call(this, action);
+UI.Invert = function(action, photo) {
+	UI.call(this, action, photo);
 
 	this._buildApply();
 }
@@ -14,5 +14,5 @@ UI.Invert.prototype.show = function(parent) {
 }
 
 UI.Invert.prototype.handleEvent = function(e) {
-	App.photo.setAction(this._action);
+	this._photo.setAction(this._action);
 }

@@ -5,7 +5,7 @@ html, body {
 
 #tools {
 	float: left;
-	width: 350px;
+	width: 400px;
 	height: 100%;
 }
 
@@ -29,11 +29,11 @@ html, body {
 	font-size: 16px;
 }
 
-#tools select#history option + option {
+#tools select.history option + option {
 	counter-increment: history;
 }
 
-#tools select#history option + option:before {
+#tools select.history option + option:before {
 	content: counter(history) ". ";
 }
 
@@ -42,7 +42,7 @@ html, body {
 }
 
 #preview {
-	margin-left: 350px;
+	margin-left: 400px;
 	height: 100%;
 }
 

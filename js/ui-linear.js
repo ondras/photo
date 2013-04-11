@@ -1,5 +1,5 @@
-UI.Linear = function(action) {
-	UI.call(this, action);
+UI.Linear = function(action, photo) {
+	UI.call(this, action, photo);
 
 	this._buildApply();
 
@@ -27,7 +27,7 @@ UI.Linear.prototype.show = function(parent) {
 
 UI.Linear.prototype.handleEvent = function(e) {
 	if (e.target == this._apply) {
-		App.photo.setAction(this._action);
+		this._photo.setAction(this._action);
 	} else {
 		this._action.setOptions({a:parseFloat(this._a.value), b:parseFloat(this._b.value)});
 		this._preview();
