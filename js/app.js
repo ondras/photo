@@ -40,16 +40,23 @@ var App = {
 		this.photo = photo;
 		var options = this._actions.querySelectorAll("option");
 		for (var i=2;i<options.length;i++) { options[i].disabled = false; }
-		photo.drawPreview();
+
+		this.resetHistory();
 	},
 
 	addHistory: function(action) {
 		var o = document.createElement("option");
 		o.innerHTML = action.getName();
 		this._history.appendChild(o);
-		this._config.innerHTML = "";
 		this._actions.selectedIndex = 0;
-		this.photo.drawPreview();
+
+		this.resetHistory();
+	},
+
+	resetHistory: function() { /* move to last history item */
+		this._history.selectedIndex = -1;
+		this._config.innerHTML = "";
+		if (this.photo) { this.photo.drawPreview(); }
 	},
 
 	canvasToImageData: function(canvas) {
@@ -65,9 +72,7 @@ var App = {
 	},
 
 	_changeAction: function(e) { /* pick a new action to preview & perform */
-		this._history.selectedIndex = -1;
-		this._config.innerHTML = "";
-		if (this.photo) { this.photo.drawPreview(); } /* draw last preview */
+		this.resetHistory();
 
 		if (e.target.selectedIndex == 0) { return; }
 

@@ -30,20 +30,29 @@ Photo.prototype.getPreviewCanvas = function(forAction) {
 }
 
 Photo.prototype.setAction = function(action) {
-	var index = this._actions.indexOf(action);
-	if (index == -1) { /* new action */
+	this._lastPreviewCanvas = null; /* invalidate last preview */
 
-		var canvas = this._getCanvas(action);
-		action.go(canvas).then(function(canvas) {
+	var canvas = this._getCanvas(action);
+
+	action.go(canvas).then(function(canvas) {
+		var index = this._actions.indexOf(action);
+
+		if (index == -1) { /* new action */
 			this._actions.push(action);
 			this._canvases.push(canvas);
-			this._lastPreviewCanvas = null; /* invalidate last preview */
 			App.addHistory(action);
-		}.bind(this));
+		} else { /* modification of an existing action */
 
-	} else { /* modification of an old action */
+			this._canvases[index+1] = canvas;
+			if (index+1 == this._actions.length) { /* was last */
+				App.resetHistory();
+			} else { /* not last, continue */
+				this.setAction(this._actions[index+1]);
+			}
 
-	}
+		}
+
+	}.bind(this));
 }
 
 Photo.prototype.getAction = function(index) {
