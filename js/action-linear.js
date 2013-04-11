@@ -1,5 +1,6 @@
 Action.Linear = function() {
 	Action.call(this);
+	this._name = "Linear";
 }
 Action.Linear.prototype = Object.create(Action.prototype);
 
@@ -12,7 +13,7 @@ Action.Linear.prototype.go = function(canvas) {
 
 Action.Linear.prototype._defaultOptions = function() {
 	return {
-		a: 1.2,
+		a: 0.6,
 		b: 0
 	};
 }

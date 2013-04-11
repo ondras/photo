@@ -1,7 +1,6 @@
 var Action = function() {
 	this._options = this._defaultOptions();
-	this._canvas = null;
-	this._name = "FIXME";
+	this._name = "";
 }
 
 Action.prototype.getName = function() {
@@ -22,23 +21,13 @@ Action.prototype.go = function(canvas) {
 	return promise;
 }
 
-Action.prototype.preview = function(canvas) {
-	this.go(canvas).then(function() {
-		Preview.getCanvas().getContext("2d").drawImage(this._canvas, 0, 0);
-	}.bind(this));
-}
-
-Action.prototype.getCanvas = function() {
-	return this._canvas;
-}
-
 Action.prototype._defaultOptions = function() {
 	return {};
 }
 
 Action.prototype._runInWorker = function(promise, data) {
 	Promise.worker("worker.js", data).then(function(id) {
-		this._canvas = App.imageDataToCanvas(id);
-		promise.fulfill(this._canvas);
+		var canvas = App.imageDataToCanvas(id);
+		promise.fulfill(canvas);
 	}.bind(this));
 }

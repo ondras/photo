@@ -1,15 +1,23 @@
 var App = {
 	photo: null,
+
 	_config: null,
 	_actions: null,
+	_history: null,
+	_preview: null,
 	
 	init: function() {
 		this._config = document.querySelector("#config");
 		this._actions = document.querySelector("#actions");
+		this._history = document.querySelector("#history");
+		this._preview = document.querySelector("#preview");
 
-		document.querySelector("#preview").appendChild(Preview.getCanvas());
+		this.resetSelects();
+
 		this._actions.addEventListener("change", this._changeAction.bind(this));
-		this._actions.selectedIndex = 0;
+		this._history.addEventListener("change", this._changeHistory.bind(this));
+
+		this._preview.appendChild(Preview.getCanvas());
 	},
 
 	setPhoto: function(photo) {
@@ -29,13 +37,21 @@ var App = {
 		return canvas;
 	},
 
-	resetAction: function(e) {
-		this._actions.selectedIndex = 0;
+	resetSelects: function(e) {
+		this._actions.selectedIndex = -1;
+		this._history.selectedIndex = -1;
 		this._config.innerHTML = "";
+
 		if (this.photo) { this.photo.drawPreview(); }
 	},
 
-	_changeAction: function(e) {
+	_changeAction: function(e) { /* pick a new action to preview & perform */
+		if (e.target.selectedIndex == 0) { 
+			this.resetSelects();
+			return;
+		}
+
+		this._history.selectedIndex = -1;
 		this._config.innerHTML = "";
 		if (this.photo) { this.photo.drawPreview(); }
 
@@ -44,6 +60,25 @@ var App = {
 		name = this._capitalize(name);
 
 		var action = new Action[name]();
+		var ui = new UI[name](action);
+		ui.show(this._config);
+	},
+
+	_changeHistory: function(e) { /* pick a history item */
+		if (e.target.selectedIndex == 0) { 
+			this.resetSelects();
+			return;
+		}
+
+		this._actions.selectedIndex = -1;
+		var action = this.photo.getAction(e.target.selectedIndex-1); /* first is label */
+
+		/* fixme bad practice */
+		var name = "";
+		for (var p in Action) {
+			if (action instanceof Action[p]) { name = p; }
+		}
+
 		var ui = new UI[name](action);
 		ui.show(this._config);
 	},

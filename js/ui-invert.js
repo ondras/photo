@@ -1,11 +1,7 @@
 UI.Invert = function(action) {
 	UI.call(this, action);
 
-	this._apply = document.createElement("input");
-	this._apply.type = "button";
-	this._apply.value = "Apply";
-	this._apply.addEventListener("click", this);
-
+	this._buildApply();
 }
 UI.Invert.prototype = Object.create(UI.prototype);
 
@@ -14,8 +10,7 @@ UI.Invert.prototype.show = function(parent) {
 
 	parent.appendChild(this._apply);
 
-	var previewCanvas = App.photo.getPreviewCanvas(this._action);
-	this._action.preview(previewCanvas);
+	this._preview();
 }
 
 UI.Invert.prototype.handleEvent = function(e) {

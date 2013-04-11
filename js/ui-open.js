@@ -15,5 +15,7 @@ UI.Open.prototype.show = function(parent) {
 }
 
 UI.Open.prototype.handleEvent = function(e) {
-	this._action.go(e.target.files[0]);
+	this._action.go(e.target.files[0]).then(function(photo) {
+		App.setPhoto(photo);
+	});
 }

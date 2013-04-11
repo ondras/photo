@@ -1,60 +1,33 @@
 var Photo = function(canvas) {
-	this._canvas = canvas; /* original image data */
+	this._canvases = [canvas];
 	this._previewCanvas = null; /* final preview */
 	this._actions = [];
-	this._actionIndex = -1;
-}
-
-Photo.fromFile = function(file) {
-	var promise = new Promise();
-
-	var fr = new FileReader();
-	Promise.event(fr, "load").then(function(e) {
-		var img = document.createElement("img");
-		img.src = e.target.result;
-		return Promise.event(img, "load");
-	}).then(function(e) {
-		var canvas = document.createElement("canvas");
-		canvas.width = e.target.width;
-		canvas.height = e.target.height;
-		var context = canvas.getContext("2d");
-		context.drawImage(e.target, 0, 0, canvas.width, canvas.height);
-		promise.fulfill(new Photo(canvas));
-	});
-	fr.readAsDataURL(file);
-
-	return promise;
 }
 
 Photo.prototype.drawPreview = function() {
-	var source = this.getCanvas();
-	var target = Preview.getCanvas();
+	var source = this._canvases[this._canvases.length-1];
 
-	this._previewCanvas = document.createElement("canvas");
-	this._previewCanvas.width = target.width;
-	this._previewCanvas.height = target.height;
-	this._previewCanvas.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
+	this._previewCanvas = this._createPreviewCanvas(source);
 
-	target.getContext("2d").drawImage(this._previewCanvas, 0, 0);
-}
-
-Photo.prototype.getCanvas = function() {
-	/* fixme private? */
-	return (this._actionIndex > -1 ? this._actions[this._actionIndex].getCanvas() : this._canvas);
+	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
 }
 
 Photo.prototype.getPreviewCanvas = function(forAction) {
-	/* FIXME forAction */
-	return this._previewCanvas;
+	var index = this._actions.indexOf(forAction);
+	if (index == -1) { return this._previewCanvas; }
+
+	var largeCanvas = this._getCanvas(forAction);
+	return this._createPreviewCanvas(largeCanvas);
 }
 
 Photo.prototype.setAction = function(action) {
 	var index = this._actions.indexOf(action);
 	if (index == -1) { /* new action */
-		action.go(this.getCanvas()).then(function() {
+		var canvas = this._getCanvas(action);
+		action.go(canvas).then(function(canvas) {
 			this._actions.push(action);
-			this._actionIndex++;
-			App.resetAction();
+			this._canvases.push(canvas);
+			App.resetSelects();
 
 			var o = document.createElement("option");
 			o.innerHTML = action.getName();
@@ -70,4 +43,23 @@ Photo.prototype.setAction = function(action) {
 
 Photo.prototype.getAction = function(index) {
 	return this._actions[index];
+}
+
+/**
+ * Get full source canvas for a given action
+ */
+Photo.prototype._getCanvas = function(forAction) {
+	var index = this._actions.indexOf(forAction);
+	return this._canvases[index == -1 ? this._canvases.length-1 : index];
+}
+
+Photo.prototype._createPreviewCanvas = function(canvas) {
+	var target = Preview.getCanvas();
+
+	var result = document.createElement("canvas");
+	result.width = target.width;
+	result.height = target.height;
+	result.getContext("2d").drawImage(canvas, 0, 0, result.width, result.height);
+
+	return result;
 }
