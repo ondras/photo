@@ -20,11 +20,12 @@ html, body {
 	box-sizing: border-box;
 }
 
-#tools > select option {
-	padding: 2px 4px;
+#tools option, #tools optgroup {
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
-#tools > select option:first-child {
+#tools > select > option:first-child {
 	font-weight: bold;
 	text-align: center;
 	font-size: 16px;

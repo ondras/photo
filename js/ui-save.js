@@ -92,16 +92,3 @@ UI.Save.prototype._build = function() {
 	this._table.appendChild(this._buildRow("Quality:", this._quality));
 	this._table.appendChild(this._buildRow(this._save, this._content));
 }
-
-UI.Save.prototype._buildRow = function(a, b) {
-	var row = document.createElement("tr");
-	var td1 = document.createElement("td");
-	var td2 = document.createElement("td");
-
-	if (typeof(a) == "string") { td1.innerHTML = a; } else { td1.appendChild(a); }
-	if (typeof(b) == "string") { td2.innerHTML = b; } else { td2.appendChild(b); }
-	row.appendChild(td1);
-	row.appendChild(td2);
-
-	return row;
-}

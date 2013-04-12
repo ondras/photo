@@ -2,6 +2,7 @@ var Preview = function(node) {
 	this._node = node;
 	this._canvas = document.createElement("canvas");
 	this._canvas.style.position = "absolute";
+	this._canvas.title = "(ctrl-wheel or shift-wheel to zoom)";
 	this._node.appendChild(this._canvas);
 
 	this._zoom = document.createElement("div");
