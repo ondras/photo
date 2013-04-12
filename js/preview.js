@@ -15,7 +15,7 @@ var Preview = function(node) {
 		{label:"25%",   scale:1/4},
 		{label:"33%",   scale:1/3},
 		{label:"50%",   scale:1/2},
-		{label:"75%",   scale:3/4},
+		{label:"67%",   scale:2/3},
 		{label:"100%",  scale:1},
 		{label:"125%",  scale:5/4},
 		{label:"150%",  scale:3/2},
