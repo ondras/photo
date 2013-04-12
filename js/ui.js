@@ -28,9 +28,11 @@ UI.prototype._buildDelete = function() {
 }
 
 UI.prototype._preview = function() {
-	var canvas = this._photo.getPreviewCanvas(this._action);
+	var canvas = this._photo.getCanvas(this._action);
+	canvas = App.preview.draw(canvas, true); /* create preview canvas */
+
 	this._action.go(canvas).then(function(canvas) {
-		App.preview.draw(canvas);
+		App.preview.draw(canvas, false); /* draw preview canvas */
 	});
 }
 

@@ -31,8 +31,49 @@ var Preview = function(node) {
 	this._canvas.addEventListener("mousewheel", this);
 }
 
-Preview.prototype.draw = function(canvas) {
-	this._canvas.getContext("2d").drawImage(canvas, 0, 0);
+/**
+ * @param {canvas} canvas
+ * @param {bool} autoScale automatically apply current scale?
+ * @returns {canvas}
+ */
+Preview.prototype.draw = function(canvas, autoScale) {
+	if (autoScale) {
+		var scale = this._zooms[this._zoomIndex].scale;
+
+		/* we have this much space */
+		var availWidth = this._node.offsetWidth;
+		var availHeight = this._node.offsetHeight;
+
+		/* large image size */
+		var originalWidth = canvas.width;
+		var originalHeight = canvas.height;
+
+		/* preview size */
+		var width = Math.round(originalWidth * scale);
+		var height = Math.round(originalHeight * scale);
+
+		/* resize & reposition our canvas */
+		this._canvas.width = width;
+		this._canvas.height = height;
+		var left = (width > availWidth ? 0 : (availWidth-width)/2);
+		var top = (height > availHeight ? 0 : (availHeight-height)/2);
+		this._canvas.style.left = Math.round(left) + "px";
+		this._canvas.style.top = Math.round(top) + "px";
+
+		/* scroll to center */
+		this._node.scrollLeft = Math.round((width-availWidth)/2);
+		this._node.scrollTop = Math.round((height-availHeight)/2);
+
+		/* draw */
+		this._canvas.getContext("2d").drawImage(canvas, 0, 0, this._canvas.width, this._canvas.height);
+
+	} else {
+		var context = this._canvas.getContext("2d");
+		context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+		context.drawImage(canvas, (this._canvas.width-canvas.width)/2, (this._canvas.height-canvas.height)/2);
+	}
+
+	return this._canvas;
 }
 
 Preview.prototype.computeZoom = function(canvas) {
@@ -55,47 +96,6 @@ Preview.prototype.computeZoom = function(canvas) {
 		if (zoom.scale <= 1 && zoom.scale <= scale) { index = i; }
 	}
 	this._setZoom(index);
-}
-
-/**
- * Return a preview-sized/positioned canvas, based on the source canvas
- */
-Preview.prototype.createCanvas = function(canvas) {
-	/* FIXME resets own canvas, always. is it a good idea? */
-
-	var scale = this._zooms[this._zoomIndex].scale;
-
-	/* we have this much space */
-	var availWidth = this._node.offsetWidth;
-	var availHeight = this._node.offsetHeight;
-
-	/* large image size */
-	var originalWidth = canvas.width;
-	var originalHeight = canvas.height;
-
-	/* preview size */
-	var width = Math.round(originalWidth * scale);
-	var height = Math.round(originalHeight * scale);
-
-	/* resize & reposition our canvas */
-	this._canvas.width = width;
-	this._canvas.height = height;
-	var left = (width > availWidth ? 0 : (availWidth-width)/2);
-	var top = (height > availHeight ? 0 : (availHeight-height)/2);
-	this._canvas.style.left = Math.round(left) + "px";
-	this._canvas.style.top = Math.round(top) + "px";
-
-	/* scroll to center */
-	this._node.scrollLeft = Math.round((width-availWidth)/2);
-	this._node.scrollTop = Math.round((height-availHeight)/2);
-
-	/* create new */
-	var result = document.createElement("canvas");
-	result.width = this._canvas.width;
-	result.height = this._canvas.height;
-	result.getContext("2d").drawImage(canvas, 0, 0, result.width, result.height);
-
-	return result;
 }
 
 Preview.prototype.handleEvent = function(e) {

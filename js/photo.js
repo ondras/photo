@@ -1,6 +1,5 @@
 var Photo = function(canvas) {
 	this._canvases = [canvas];
-	this._previewCanvas = null;
 	this._actions = [];
 	
 	this._historySelect = document.createElement("select");
@@ -17,7 +16,7 @@ var Photo = function(canvas) {
  */
 Photo.prototype.resetHistory = function() {
 	this._historySelect.selectedIndex = -1;
-	App.preview.draw(this._previewCanvas);
+	App.preview.draw(this._canvases[this._canvases.length-1], true); /* draw the last state */
 	App.showUI(null); /* hide UI, if there was some */
 }
 
@@ -29,18 +28,6 @@ Photo.prototype.getCanvas = function(action) {
 	return this._canvases[index == -1 ? this._canvases.length-1 : index];
 }
 
-/**
- * Return preview canvas for an action.
- * Implemented in Photo (as opposed to an UI), so we can cache the _previewCanvas for unknown actions
- */
-Photo.prototype.getPreviewCanvas = function(action) {
-	var index = this._actions.indexOf(action);
-	if (index == -1) { return this._previewCanvas; }
-
-	var largeCanvas = this.getCanvas(action);
-	return App.preview.createCanvas(largeCanvas);
-}
-
 Photo.prototype.hasAction = function(action) {
 	return (this._actions.indexOf(action) != -1);
 }
@@ -50,12 +37,10 @@ Photo.prototype.getHistorySelect = function() {
 }
 
 Photo.prototype.invalidatePreview = function() {
-	this._createLastPreviewCanvas(); /* not valid anymore */
-
 	if (this._historySelect.selectedIndex == 0) { /* show (and re-create) first state */
 		this._showFirstPreview();
 	} else { /* show last state; might be overwritten by an action */
-		App.preview.draw(this._previewCanvas);
+		App.preview.draw(this._canvases[this._canvases.length-1], true);
 	}
 }
 
@@ -75,8 +60,7 @@ Photo.prototype.setAction = function(action) {
 			if (index < this._actions.length) { /* not last, continue */
 				this.setAction(this._actions[index]);
 			} else { /* last one */
-				this._createLastPreviewCanvas();
-				this.resetHistory(); /* leave our selectbox */
+				this.resetHistory(); /* leave our selectbox, draw last */
 			}
 
 		}
@@ -91,7 +75,6 @@ Photo.prototype.deleteAction = function(action) {
 	option.parentNode.removeChild(option);
 
 	if (index == this._actions.length) { /* was last */
-		this._createLastPreviewCanvas();
 		this.resetHistory();
 	} else { /* not last; re-run all next actions */
 		this.setAction(this._actions[index]);
@@ -128,16 +111,9 @@ Photo.prototype._addHistory = function(action, canvas) {
 	this._historySelect.appendChild(o);
 	
 	App.resetActions();
-
-	this._createLastPreviewCanvas(); /* update last preview */
 	this.resetHistory(); /* show last preview, reset select */
 }
 
-Photo.prototype._createLastPreviewCanvas = function() {
-	this._previewCanvas = App.preview.createCanvas(this._canvases[this._canvases.length-1]);
-}
-
 Photo.prototype._showFirstPreview = function() {
-	var canvas = App.preview.createCanvas(this._canvases[0]);
-	App.preview.draw(canvas);
+	App.preview.draw(this._canvases[0], true); /* draw first state */
 }
