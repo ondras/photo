@@ -4,7 +4,7 @@ var UI = function(action, photo) {
 }
 
 UI.prototype.show = function(parent) {
-	parent.innerHTML = "";
+	parent.innerHTML = "<h2>" + this._action.getName() + "</h2>";
 }
 
 UI.prototype._buildApply = function() {

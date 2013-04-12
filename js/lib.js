@@ -17,5 +17,29 @@ var Lib = {
 		}
 
 		return id;
+	},
+
+	average: function(id, mode) {
+		var w = id.width;
+		var h = id.height;
+
+		for (var i=0;i<w*h;i++) {
+			var r = id.data[4*i+0];
+			var g = id.data[4*i+1];
+			var b = id.data[4*i+2];
+
+			switch (mode) {
+				case 0: var x = (Math.max(r, g, b) + Math.min(r, g, b))/2; break;
+				case 1: var x = 0.299*r+0.587*g+0.114*b; break;
+				case 2: var x = (r+g+b)/3; break;
+			}
+
+			id.data[4*i+0] = x;
+			id.data[4*i+1] = x;
+			id.data[4*i+2] = x;
+		}
+
+		return id;
+
 	}
 }
