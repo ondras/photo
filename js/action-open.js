@@ -1,5 +1,6 @@
 Action.Open = function() {
 	Action.call(this);
+	this._name = "Open image";
 }
 Action.Open.prototype = Object.create(Action.prototype);
 

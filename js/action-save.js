@@ -1,5 +1,6 @@
 Action.Save = function() {
 	Action.call(this);
+	this._name = "Save image";
 }
 Action.Save.prototype = Object.create(Action.prototype);
 

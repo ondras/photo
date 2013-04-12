@@ -9,7 +9,7 @@ html, body {
 	height: 100%;
 }
 
-#tools select {
+#tools > select {
 	width: 50%;
 	height: 50%;
 	display: inline-block;
@@ -19,21 +19,21 @@ html, body {
 	box-sizing: border-box;
 }
 
-#tools select option {
+#tools > select option {
 	padding: 2px 4px;
 }
 
-#tools select option:first-child {
+#tools > select option:first-child {
 	font-weight: bold;
 	text-align: center;
 	font-size: 16px;
 }
 
-#tools select.history option + option {
+#tools > select.history option + option {
 	counter-increment: history;
 }
 
-#tools select.history option + option:before {
+#tools > select.history option + option:before {
 	content: counter(history) ". ";
 }
 
@@ -54,6 +54,12 @@ html, body {
 #config .delete:before {
 	content: "✘ ";
 	color: #b00;
+	font-weight: bold;
+}
+
+#config .save:before {
+	content: "⇓ ";
+	color: #00b;
 	font-weight: bold;
 }
 

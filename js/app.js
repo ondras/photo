@@ -14,6 +14,15 @@ var App = {
 		this._actions.selectedIndex = 0;
 		this._actions.addEventListener("change", this._changeAction.bind(this));
 		var options = this._actions.querySelectorAll("option");
+
+		for (var i=0;i<options.length;i++) {
+			var name = options[i].value;
+			if (!name) { continue; }
+			name = this._capitalize(name);
+			var action = new Action[name]();
+			options[i].innerHTML = action.getName();
+		}
+
 		for (var i=2;i<options.length;i++) { options[i].disabled = true; }
 
 		this._preview.appendChild(Preview.getCanvas());
