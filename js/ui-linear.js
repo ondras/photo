@@ -2,6 +2,7 @@ UI.Linear = function(action, photo) {
 	UI.call(this, action, photo);
 
 	this._buildApply();
+	this._buildDelete();
 
 	this._a = document.createElement("input");
 	this._a.type = "text";
@@ -21,6 +22,7 @@ UI.Linear.prototype.show = function(parent) {
 	parent.appendChild(this._a);
 	parent.appendChild(this._b);
 	parent.appendChild(this._apply);
+	if (this._photo.hasAction(this._action)) { parent.appendChild(this._delete); }
 
 	this._preview();
 }
@@ -29,7 +31,10 @@ UI.Linear.prototype.handleEvent = function(e) {
 	if (e.target == this._apply) {
 		this._photo.setAction(this._action);
 	} else {
-		this._action.setOptions({a:parseFloat(this._a.value), b:parseFloat(this._b.value)});
+		var options = this._action.getOptions();
+		options.a = parseFloat(this._a.value);
+		options.b = parseFloat(this._b.value);
+		this._action.setOptions(options);
 		this._preview();
 	}
 }

@@ -41,6 +41,22 @@ html, body {
 	padding: 1em;
 }
 
+#config label {
+	display: block;
+}
+
+#config .apply:before {
+	content: "✔ ";
+	color: #0b0;
+	font-weight: bold;
+}
+
+#config .delete:before {
+	content: "✘ ";
+	color: #b00;
+	font-weight: bold;
+}
+
 #preview {
 	margin-left: 400px;
 	height: 100%;
@@ -50,4 +66,9 @@ html, body {
 	position: fixed;
 	left: 10px;
 	bottom: 10px;
+}
+
+#throbber:before {
+	content: url(throbber.gif) " ";
+	vertical-align: middle;
 }

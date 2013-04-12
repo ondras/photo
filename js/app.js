@@ -1,7 +1,7 @@
 var App = {
-	photo: null,
+	_photo: null,
 
-	_config: null,
+	_config: null, /* FIXME clearing is problematic */
 	_actions: null,
 	_preview: null,
 	
@@ -32,11 +32,11 @@ var App = {
 
 	setPhoto: function(photo) {
 		/* fixme existing photo */
-		this.photo = photo;
+		this._photo = photo;
 		var options = this._actions.querySelectorAll("option");
 		for (var i=2;i<options.length;i++) { options[i].disabled = false; }
 		
-		this._actions.parentNode.insertBefore(this.photo.getHistorySelect(), this._actions.nextSibling);
+		this._actions.parentNode.insertBefore(this._photo.getHistorySelect(), this._actions.nextSibling);
 	},
 	
 	showUI: function(ui) {
@@ -61,7 +61,7 @@ var App = {
 	},
 
 	_changeAction: function(e) { /* pick a new action to preview & perform */
-		if (this.photo) { this.photo.setHistoryIndex(-1); }
+		if (this._photo) { this._photo.resetHistory(); } /* interrupt any opened history */
 		if (e.target.selectedIndex == 0) { return; }
 
 		var name = e.target.value;
@@ -69,7 +69,7 @@ var App = {
 		name = this._capitalize(name);
 
 		var action = new Action[name]();
-		var ui = new UI[name](action, this.photo);
+		var ui = new UI[name](action, this._photo);
 		ui.show(this._config);
 	},
 

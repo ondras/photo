@@ -1,10 +1,7 @@
 var Photo = function(canvas) {
 	this._canvases = [canvas];
-	this._historyIndex = 0; /* -1 = last; >-1 = after that many actions */
 	this._previewCanvas = null;
 	this._actions = [];
-	
-	
 	
 	this._historySelect = document.createElement("select");
 	this._historySelect.size = 2;
@@ -13,21 +10,41 @@ var Photo = function(canvas) {
 	o.innerHTML = "History";
 	this._historySelect.appendChild(o);
 	this._historySelect.addEventListener("change", this);
-	
-	this.setHistoryIndex();
+
+	this._createLastPreviewCanvas();
+	this.resetHistory();
 }
 
-Photo.prototype.handleEvent = function(e) {
-	App.resetActions();
-	this.setHistoryIndex(e.target.selectedIndex);
+/**
+ * Reset the selectbox => show the last preview canvas 
+ */
+Photo.prototype.resetHistory = function() {
+	this._historySelect.selectedIndex = -1;
+	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
 }
 
-Photo.prototype.getCanvas = function() {
-	return this._canvases[Math.max(0, this._historyIndex-2)];
+/**
+ * Return canvas for an action
+ */
+Photo.prototype.getCanvas = function(action) {
+	var index = this._actions.indexOf(action);
+	return this._canvases[index == -1 ? this._canvases.length-1 : index];
 }
 
-Photo.prototype.getPreviewCanvas = function() {
-	return this._previewCanvas;
+/**
+ * Return preview canvas for an action.
+ * Implemented in Photo (as opposed to an UI), so we can cache the _previewCanvas for unknown actions
+ */
+Photo.prototype.getPreviewCanvas = function(action) {
+	var index = this._actions.indexOf(action);
+	if (index == -1) { return this._previewCanvas; }
+
+	var largeCanvas = this.getCanvas(action);
+	return this._createPreviewCanvas(largeCanvas);
+}
+
+Photo.prototype.hasAction = function(action) {
+	return (this._actions.indexOf(action) != -1);
 }
 
 Photo.prototype.getHistorySelect = function() {
@@ -35,32 +52,38 @@ Photo.prototype.getHistorySelect = function() {
 }
 
 Photo.prototype.setAction = function(action) {
-	action.go(this.getCanvas()).then(function(canvas) {
+	action.go(this.getCanvas(action)).then(function(canvas) {
+		var index = this._actions.indexOf(action);
 
-		if (this._historyIndex == -1) { /* new action */
+		if (index == -1) { /* new action */
 		
 			this._addHistory(action, canvas);
 
 		} else { /* modification of an existing action */
 
-			this._canvases[this._historyIndex-1] = canvas;
-			this.setHistoryIndex(this._historyIndex+1);
-			if (this._historyIndex < this._actions.length) { /* not last, continue */
-				this.setAction(this._actions[this._historyIndex]);
+			index++;
+			this._canvases[index] = canvas;
+
+			if (index < this._actions.length) { /* not last, continue */
+				this.setAction(this._actions[index]);
+			} else { /* last one */
+				this._createLastPreviewCanvas();
+				this.resetHistory();
 			}
 
 		}
 	}.bind(this));
 }
 
-Photo.prototype.setHistoryIndex = function(index) {
-	this._historyIndex = index;
-	this._historySelect.selectedIndex = index;
-	
-	this._createPreviewCanvas();
-	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
 
-	if (index < 1) { return; }
+Photo.prototype.handleEvent = function(e) {
+	App.resetActions();
+	var index = e.target.selectedIndex;
+
+	if (index == 0) { /* special case: show the first preview canvas */
+		this._showFirstPreview();
+		return; 
+	}
 
 	var action = this._actions[index-1];
 	var name = "";
@@ -71,6 +94,9 @@ Photo.prototype.setHistoryIndex = function(index) {
 	App.showUI(ui);
 }
 
+/**
+ * Add a new item to the history chain
+ */
 Photo.prototype._addHistory = function(action, canvas) {
 	this._actions.push(action);
 	this._canvases.push(canvas);
@@ -80,15 +106,28 @@ Photo.prototype._addHistory = function(action, canvas) {
 	this._historySelect.appendChild(o);
 	
 	App.resetActions();
+
+	this._createLastPreviewCanvas(); /* update last preview */
+	this.resetHistory(); /* show last preview, reset select */
 }
 
-Photo.prototype._createPreviewCanvas = function() {
-	var source = this.getCanvas();
+
+Photo.prototype._createPreviewCanvas = function(canvas) {
 	var target = Preview.getCanvas();
 
-	this._previewCanvas = document.createElement("canvas");
-	this._previewCanvas.width = target.width;
-	this._previewCanvas.height = target.height;
-	this._previewCanvas.getContext("2d").drawImage(source, 0, 0, target.width, target.height);
+	var result = document.createElement("canvas");
+	result.width = target.width;
+	result.height = target.height;
+	result.getContext("2d").drawImage(canvas, 0, 0, target.width, target.height);
+
+	return result;
 }
 
+Photo.prototype._createLastPreviewCanvas = function() {
+	this._previewCanvas = this._createPreviewCanvas(this._canvases[this._canvases.length-1]);
+}
+
+Photo.prototype._showFirstPreview = function() {
+	var canvas = this._createPreviewCanvas(this._canvases[0]);
+	Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
+}
