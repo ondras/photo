@@ -1,6 +1,7 @@
 html, body {
 	height: 100%;
 	margin: 0;
+	font-family: sans-serif;
 }
 
 #tools {
@@ -63,11 +64,6 @@ html, body {
 	font-weight: bold;
 }
 
-#preview {
-	margin-left: 400px;
-	height: 100%;
-}
-
 #throbber {
 	position: fixed;
 	left: 10px;
@@ -77,4 +73,21 @@ html, body {
 #throbber:before {
 	content: url(throbber.gif) " ";
 	vertical-align: middle;
+}
+
+#preview {
+	margin-left: 400px;
+	height: 100%;
+	overflow: auto;
+	position: relative;
+}
+
+#preview #zoom {
+	position: fixed;
+	left: 405px;
+	top: 5px;
+	background-color: rgba(255, 255, 255, 0.5);
+	border-radius: 5px;
+	padding: 0 3px;
+	font-size: 90%;
 }

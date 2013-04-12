@@ -1,14 +1,16 @@
 var App = {
 	_photo: null,
+	_ui: null,
+	preview: null,
 
-	_config: null, /* FIXME clearing is problematic */
+	_config: null,
 	_actions: null,
-	_preview: null,
 	
 	init: function() {
+		this.preview = new Preview(document.querySelector("#preview"));
+
 		this._config = document.querySelector("#config");
 		this._actions = document.querySelector("#actions");
-		this._preview = document.querySelector("#preview");
 		this._throbber = document.querySelector("#throbber");
 
 		this._actions.selectedIndex = 0;
@@ -24,8 +26,6 @@ var App = {
 		}
 
 		for (var i=2;i<options.length;i++) { options[i].disabled = true; }
-
-		this._preview.appendChild(Preview.getCanvas());
 
 		this.hideThrobber();
 	},
@@ -46,14 +46,20 @@ var App = {
 		for (var i=2;i<options.length;i++) { options[i].disabled = false; }
 		
 		this._actions.parentNode.insertBefore(this._photo.getHistorySelect(), this._actions.nextSibling);
+
+		this.resetActions();
+		App.preview.computeZoom(photo.getCanvas());
 	},
 	
 	showUI: function(ui) {
-		ui.show(this._config);
+		if (this._ui) { this._ui.hide(); } /* FIXME test & check */
+		this._ui = ui;
+		if (this._ui) { this._ui.show(this._config); }
+		return this;
 	},
 
 	resetActions: function() {
-		this._config.innerHTML = "";
+		this.showUI(null);
 		this._actions.selectedIndex = 0;
 	},
 
@@ -69,6 +75,11 @@ var App = {
 		return canvas;
 	},
 
+	invalidatePreview: function() { /* preview changed, need to update as necessary */
+		if (this._photo) { this._photo.invalidatePreview(); }
+		if (this._ui) { this._ui.invalidatePreview(); }
+	},
+
 	_changeAction: function(e) { /* pick a new action to preview & perform */
 		if (this._photo) { this._photo.resetHistory(); } /* interrupt any opened history */
 		if (e.target.selectedIndex == 0) { return; }
@@ -79,7 +90,7 @@ var App = {
 
 		var action = new Action[name]();
 		var ui = new UI[name](action, this._photo);
-		ui.show(this._config);
+		this.showUI(ui);
 	},
 
 	_capitalize: function(str) {

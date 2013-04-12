@@ -10,9 +10,6 @@ var Photo = function(canvas) {
 	o.innerHTML = "History";
 	this._historySelect.appendChild(o);
 	this._historySelect.addEventListener("change", this);
-
-	this._createLastPreviewCanvas();
-	this.resetHistory();
 }
 
 /**
@@ -20,7 +17,8 @@ var Photo = function(canvas) {
  */
 Photo.prototype.resetHistory = function() {
 	this._historySelect.selectedIndex = -1;
-	Preview.getCanvas().getContext("2d").drawImage(this._previewCanvas, 0, 0);
+	App.preview.draw(this._previewCanvas);
+	App.showUI(null); /* hide UI, if there was some */
 }
 
 /**
@@ -40,7 +38,7 @@ Photo.prototype.getPreviewCanvas = function(action) {
 	if (index == -1) { return this._previewCanvas; }
 
 	var largeCanvas = this.getCanvas(action);
-	return this._createPreviewCanvas(largeCanvas);
+	return App.preview.createCanvas(largeCanvas);
 }
 
 Photo.prototype.hasAction = function(action) {
@@ -49,6 +47,16 @@ Photo.prototype.hasAction = function(action) {
 
 Photo.prototype.getHistorySelect = function() {
 	return this._historySelect;
+}
+
+Photo.prototype.invalidatePreview = function() {
+	this._createLastPreviewCanvas(); /* not valid anymore */
+
+	if (this._historySelect.selectedIndex == 0) { /* show (and re-create) first state */
+		this._showFirstPreview();
+	} else { /* show last state; might be overwritten by an action */
+		App.preview.draw(this._previewCanvas);
+	}
 }
 
 Photo.prototype.setAction = function(action) {
@@ -68,7 +76,7 @@ Photo.prototype.setAction = function(action) {
 				this.setAction(this._actions[index]);
 			} else { /* last one */
 				this._createLastPreviewCanvas();
-				this.resetHistory();
+				this.resetHistory(); /* leave our selectbox */
 			}
 
 		}
@@ -125,23 +133,11 @@ Photo.prototype._addHistory = function(action, canvas) {
 	this.resetHistory(); /* show last preview, reset select */
 }
 
-
-Photo.prototype._createPreviewCanvas = function(canvas) {
-	var target = Preview.getCanvas();
-
-	var result = document.createElement("canvas");
-	result.width = target.width;
-	result.height = target.height;
-	result.getContext("2d").drawImage(canvas, 0, 0, target.width, target.height);
-
-	return result;
-}
-
 Photo.prototype._createLastPreviewCanvas = function() {
-	this._previewCanvas = this._createPreviewCanvas(this._canvases[this._canvases.length-1]);
+	this._previewCanvas = App.preview.createCanvas(this._canvases[this._canvases.length-1]);
 }
 
 Photo.prototype._showFirstPreview = function() {
-	var canvas = this._createPreviewCanvas(this._canvases[0]);
-	Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
+	var canvas = App.preview.createCanvas(this._canvases[0]);
+	App.preview.draw(canvas);
 }

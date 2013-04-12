@@ -27,6 +27,8 @@ UI.Save.prototype.handleEvent = function(e) {
 	}
 }
 
+UI.Save.prototype.invalidatePreview = function() {} /* no preview */
+
 UI.Save.prototype._showLink = function(data) {
 	var link = document.createElement("a");
 	link.download = this._name.value;

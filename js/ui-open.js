@@ -19,3 +19,5 @@ UI.Open.prototype.handleEvent = function(e) {
 		App.setPhoto(photo);
 	});
 }
+
+UI.Open.prototype.invalidatePreview = function() {} /* no preview */

@@ -1,10 +1,20 @@
 var UI = function(action, photo) {
 	this._action = action;
 	this._photo = photo;
+	this._parent = null;
 }
 
 UI.prototype.show = function(parent) {
+	this._parent = parent;
 	parent.innerHTML = "<h2>" + this._action.getName() + "</h2>";
+}
+
+UI.prototype.hide = function() {
+	this._parent.innerHTML = "";
+}
+
+UI.prototype.invalidatePreview = function() {
+	this._preview();
 }
 
 UI.prototype._buildApply = function() {
@@ -20,7 +30,7 @@ UI.prototype._buildDelete = function() {
 UI.prototype._preview = function() {
 	var canvas = this._photo.getPreviewCanvas(this._action);
 	this._action.go(canvas).then(function(canvas) {
-		Preview.getCanvas().getContext("2d").drawImage(canvas, 0, 0);
+		App.preview.draw(canvas);
 	});
 }
 
