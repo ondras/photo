@@ -1,6 +1,7 @@
 - FIXMEs
-- passing config+preview to photo
+- passing preview around?
 - crop
 - histogram
 - color balance
-- mouse panning
+- image unloading
+- locking

@@ -27,8 +27,18 @@ var Preview = function(node) {
 	];
 	this._zoomIndex = -1;
 
+	this._pan = {
+		x: 0,
+		y: 0,
+		active: false
+	}
+
 	this._canvas.addEventListener("wheel", this);
 	this._canvas.addEventListener("mousewheel", this);
+	this._canvas.addEventListener("mousedown", this);
+	this._canvas.addEventListener("mousemove", this);
+	this._canvas.addEventListener("mouseup", this);
+	this._canvas.addEventListener("mouseout", this);
 }
 
 /**
@@ -99,14 +109,40 @@ Preview.prototype.computeZoom = function(canvas) {
 }
 
 Preview.prototype.handleEvent = function(e) {
-	if (!e.ctrlKey && !e.shiftKey) { return; }
-	e.preventDefault();
+	switch (e.type) {
+		case "wheel":
+		case "mousewheel":
+			if (!e.ctrlKey && !e.shiftKey) { return; }
+			e.preventDefault();
 
-	var dir = 1;
-	if (e.wheelDelta && e.wheelDelta < 0) { dir = -1; }
-	if (e.deltaY && e.deltaY > 0) { dir = -1; }
+			var dir = 1;
+			if (e.wheelDelta && e.wheelDelta < 0) { dir = -1; }
+			if (e.deltaY && e.deltaY > 0) { dir = -1; }
 
-	this._setZoom(this._zoomIndex + dir);
+			this._setZoom(this._zoomIndex + dir);
+		break;
+
+		case "mousedown":
+			this._pan.active = true;
+			this._pan.x = e.clientX;
+			this._pan.y = e.clientY;
+			this._pan.left = this._node.scrollLeft;
+			this._pan.top = this._node.scrollTop;
+		break;
+
+		case "mouseup":
+		case "mouseout":
+			this._pan.active = false;
+		break;
+
+		case "mousemove":
+			if (!this._pan.active) { break; }
+			var dx = e.clientX - this._pan.x;
+			var dy = e.clientY - this._pan.y;
+			this._node.scrollLeft = this._pan.left - dx;
+			this._node.scrollTop = this._pan.top - dy;
+		break;
+	}
 }
 
 Preview.prototype._setZoom = function(index) {

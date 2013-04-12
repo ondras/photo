@@ -92,3 +92,7 @@ html, body {
 	padding: 0 3px;
 	font-size: 90%;
 }
+
+#preview canvas {
+	cursor: move;
+}
