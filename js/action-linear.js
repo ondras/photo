@@ -8,7 +8,16 @@ Action.Linear.prototype = Object.create(Action.prototype);
 Action.Linear.prototype.go = function(canvas) {
 	var promise = Action.prototype.go.call(this, canvas);
 	var id = App.canvasToImageData(canvas);
-	this._runInWorker(promise, {method:"linear", args: [id, this._options.a, this._options.b]});
+
+	var a = this._options.a;
+	var b = this._options.b;
+	var def = {
+		r: {a:a, b:b},
+		g: {a:a, b:b},
+		b: {a:a, b:b}
+	}
+
+	this._runInWorker(promise, {method:"linear", args: [id, def]});
 	return promise;
 }
 

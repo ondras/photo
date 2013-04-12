@@ -28,7 +28,11 @@ UI.Invert.prototype.show = function(parent) {
 UI.Invert.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "click":
-			this._photo.setAction(this._action);
+			if (e.target == this._apply) {
+				this._photo.setAction(this._action);
+			} else if (e.target == this._delete) {
+				this._photo.deleteAction(this._action);
+			}
 		break;
 
 		case "change":

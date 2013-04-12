@@ -13,13 +13,13 @@ html, body {
 	width: 50%;
 	height: 50%;
 	display: inline-block;
-	
+	font-size: 14px;
+
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 #tools select option {
-	font-size: 14px;
 	padding: 2px 4px;
 }
 

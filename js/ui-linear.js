@@ -28,13 +28,21 @@ UI.Linear.prototype.show = function(parent) {
 }
 
 UI.Linear.prototype.handleEvent = function(e) {
-	if (e.target == this._apply) {
-		this._photo.setAction(this._action);
-	} else {
-		var options = this._action.getOptions();
-		options.a = parseFloat(this._a.value);
-		options.b = parseFloat(this._b.value);
-		this._action.setOptions(options);
-		this._preview();
+	switch (e.type) {
+		case "change":
+			var options = this._action.getOptions();
+			options.a = parseFloat(this._a.value);
+			options.b = parseFloat(this._b.value);
+			this._action.setOptions(options);
+			this._preview();
+		break;
+
+		case "click":
+			if (e.target == this._apply) {
+				this._photo.setAction(this._action);
+			} else if (e.target == this._delete) {
+				this._photo.deleteAction(this._action);
+			}
+		break;
 	}
 }

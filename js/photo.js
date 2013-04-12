@@ -75,6 +75,20 @@ Photo.prototype.setAction = function(action) {
 	}.bind(this));
 }
 
+Photo.prototype.deleteAction = function(action) {
+	var index = this._actions.indexOf(action);
+	this._actions.splice(index, 1);
+	this._canvases.splice(index+1, 1);
+	var option = this._historySelect.options[index+1];
+	option.parentNode.removeChild(option);
+
+	if (index == this._actions.length) { /* was last */
+		this._createLastPreviewCanvas();
+		this.resetHistory();
+	} else { /* not last; re-run all next actions */
+		this.setAction(this._actions[index]);
+	}
+}
 
 Photo.prototype.handleEvent = function(e) {
 	App.resetActions();
