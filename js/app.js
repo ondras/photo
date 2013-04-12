@@ -48,7 +48,7 @@ var App = {
 		this._actions.parentNode.insertBefore(this._photo.getHistorySelect(), this._actions.nextSibling);
 
 		this.resetActions();
-		App.preview.computeZoom(photo.getCanvas());
+		this.preview.computeZoom(photo.getCanvas());
 	},
 	
 	showUI: function(ui) {

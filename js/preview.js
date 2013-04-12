@@ -123,6 +123,7 @@ Preview.prototype.handleEvent = function(e) {
 		break;
 
 		case "mousedown":
+			e.preventDefault();
 			this._pan.active = true;
 			this._pan.x = e.clientX;
 			this._pan.y = e.clientY;
@@ -137,6 +138,7 @@ Preview.prototype.handleEvent = function(e) {
 
 		case "mousemove":
 			if (!this._pan.active) { break; }
+			e.preventDefault();
 			var dx = e.clientX - this._pan.x;
 			var dy = e.clientY - this._pan.y;
 			this._node.scrollLeft = this._pan.left - dx;
