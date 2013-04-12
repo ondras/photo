@@ -18,7 +18,13 @@ Action.Scale.prototype.go = function(canvas) {
 	var result = document.createElement("canvas");
 	result.width = Math.round(width);
 	result.height = Math.round(height);
-	result.getContext("2d").drawImage(canvas, 0, 0, result.width, result.height);
+	var context = result.getContext("2d");
+
+	context.webkitImageSmoothingEnabled = this._options.smooth;
+	context.mozImageSmoothingEnabled = this._options.smooth;
+	context.imageSmoothingEnabled = this._options.smooth;
+
+	context.drawImage(canvas, 0, 0, result.width, result.height);
 
 	promise.fulfill(result);
 
@@ -29,6 +35,7 @@ Action.Scale.prototype._defaultOptions = function() {
 	return {
 		units: "rel",
 		width: 1,
-		height: 1
+		height: 1,
+		smooth: true
 	};
 }

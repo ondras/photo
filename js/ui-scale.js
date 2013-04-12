@@ -15,6 +15,7 @@ UI.Scale.prototype.show = function(parent) {
 
 	var options = this._action.getOptions();
 	this._units.value = options.units;
+	this._smooth.checked = options.smooth;
 	if (this._units.value == "abs") {
 		this._width.value = options.width;
 		this._height.value = options.height;
@@ -34,6 +35,7 @@ UI.Scale.prototype.handleEvent = function(e) {
 
 			var options = this._action.getOptions();
 			options.units = this._units.value;
+			options.smooth = this._smooth.checked;
 			if (this._units.value == "abs") {
 				options.width = parseFloat(this._width.value);
 				options.height = parseFloat(this._height.value);
@@ -91,10 +93,20 @@ UI.Scale.prototype._build = function() {
 	aspectLabel.htmlFor = "aspect";
 	aspectLabel.innerHTML = "Fixed ratio:";
 
+	this._smooth = document.createElement("input");
+	this._smooth.type = "checkbox";
+	this._smooth.id = "smooth";
+	this._smooth.addEventListener("change", this);
+
+	var smoothLabel = document.createElement("label");
+	smoothLabel.htmlFor = "smooth";
+	smoothLabel.innerHTML = "Smooth:";
+
 	this._table.appendChild(this._buildRow("Units:", this._units));
 	this._table.appendChild(this._buildRow(aspectLabel, this._aspect));
 	this._table.appendChild(this._buildRow("Width:", this._width));
 	this._table.appendChild(this._buildRow("Height:", this._height));
+	this._table.appendChild(this._buildRow(smoothLabel, this._smooth));
 	this._table.appendChild(this._buildRow(this._apply, this._delete));
 }
 
