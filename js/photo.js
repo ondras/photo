@@ -8,6 +8,10 @@ var Photo = function(canvas) {
 	var o = document.createElement("option");
 	o.innerHTML = "History";
 	this._historySelect.appendChild(o);
+	var o = document.createElement("option");
+	o.innerHTML = "Open image";
+	this._historySelect.appendChild(o);
+	this._historySelect.selectedIndex = 0;
 	this._historySelect.addEventListener("change", this);
 }
 
@@ -15,7 +19,7 @@ var Photo = function(canvas) {
  * Reset the selectbox => show the last preview canvas 
  */
 Photo.prototype.resetHistory = function() {
-	this._historySelect.selectedIndex = -1;
+	this._historySelect.selectedIndex = 0;
 	App.preview.draw(this._canvases[this._canvases.length-1], true); /* draw the last state */
 	App.showUI(null); /* hide UI, if there was some */
 }
@@ -37,7 +41,7 @@ Photo.prototype.getHistorySelect = function() {
 }
 
 Photo.prototype.invalidatePreview = function() {
-	if (this._historySelect.selectedIndex == 0) { /* show (and re-create) first state */
+	if (this._historySelect.selectedIndex == 1) { /* show (and re-create) first state */
 		this._showFirstPreview();
 	} else { /* show last state; might be overwritten by an action */
 		App.preview.draw(this._canvases[this._canvases.length-1], true);
@@ -71,7 +75,7 @@ Photo.prototype.deleteAction = function(action) {
 	var index = this._actions.indexOf(action);
 	this._actions.splice(index, 1);
 	this._canvases.splice(index+1, 1);
-	var option = this._historySelect.options[index+1];
+	var option = this._historySelect.options[index+2];
 	option.parentNode.removeChild(option);
 
 	if (index == this._actions.length) { /* was last */
@@ -85,12 +89,17 @@ Photo.prototype.handleEvent = function(e) {
 	App.resetActions();
 	var index = e.target.selectedIndex;
 
-	if (index == 0) { /* special case: show the first preview canvas */
+	if (index == 0) { /* special case: show the last version */
+		this.resetHistory();
+		return; 
+	}
+
+	if (index == 1) { /* special case: show the first preview canvas */
 		this._showFirstPreview();
 		return; 
 	}
 
-	var action = this._actions[index-1];
+	var action = this._actions[index-2];
 	var name = "";
 	for (var p in Action) { /* fixme bad practice */
 		if (action instanceof Action[p]) { name = p; }

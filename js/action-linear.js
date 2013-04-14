@@ -7,7 +7,7 @@ Action.Linear.prototype = Object.create(Action.prototype);
 
 Action.Linear.prototype.go = function(canvas) {
 	var promise = Action.prototype.go.call(this, canvas);
-	var id = App.canvasToImageData(canvas);
+	var id = this._canvasToImageData(canvas);
 
 	var a = this._options.a;
 	var b = this._options.b;

@@ -29,8 +29,20 @@ Action.prototype._defaultOptions = function() {
 Action.prototype._runInWorker = function(promise, data) {
 	App.showThrobber(this._throbber);
 	Promise.worker("worker.js", data).then(function(id) {
-		var canvas = App.imageDataToCanvas(id);
+		var canvas = this._imageDataToCanvas(id);
 		App.hideThrobber();
 		promise.fulfill(canvas);
 	}.bind(this));
+}
+
+Action.prototype._canvasToImageData = function(canvas) {
+	return canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+}
+
+Action.prototype._imageDataToCanvas = function(id) {
+	var canvas = document.createElement("canvas");
+	canvas.width = id.width;
+	canvas.height = id.height;
+	canvas.getContext("2d").putImageData(id, 0, 0);
+	return canvas;
 }

@@ -40,6 +40,19 @@ var Lib = {
 		}
 
 		return id;
+	},
 
+	histogram: function(id) {
+		var results = new Array(256*3);
+		for (var i=0;i<results.length;i++) { results[i] = 0; }
+		var w = id.width;
+		var h = id.height;
+
+		for (var i=0;i<w*h;i++) {
+			var sum = id.data[4*i+0] + id.data[4*i+1] + id.data[4*i+2];
+			results[sum]++;
+		}
+
+		return results;
 	}
 }

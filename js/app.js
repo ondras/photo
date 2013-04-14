@@ -40,7 +40,11 @@ var App = {
 	},
 
 	setPhoto: function(photo) {
-		/* fixme existing photo */
+		if (this._photo) {
+			var select = this._photo.getHistorySelect();
+			select.parentNode.removeChild(select);
+		}
+		
 		this._photo = photo;
 		var options = this._actions.querySelectorAll("option");
 		for (var i=2;i<options.length;i++) { options[i].disabled = false; }
@@ -61,18 +65,6 @@ var App = {
 	resetActions: function() {
 		this.showUI(null);
 		this._actions.selectedIndex = 0;
-	},
-
-	canvasToImageData: function(canvas) {
-		return canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
-	},
-
-	imageDataToCanvas: function(id) {
-		var canvas = document.createElement("canvas");
-		canvas.width = id.width;
-		canvas.height = id.height;
-		canvas.getContext("2d").putImageData(id, 0, 0);
-		return canvas;
 	},
 
 	invalidatePreview: function() { /* preview changed, need to update as necessary */

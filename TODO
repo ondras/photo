@@ -1,9 +1,9 @@
 - FIXMEs
-- passing preview around?
 - crop
-- histogram
+- interactive histogram
 - color balance
-- image unloading
 - locking
-- normalize improved?
-- input range
+- input type range
+- load clipboard
+- actions use cloned options
+- bug absolute resize preview

@@ -18,13 +18,12 @@ UI.Linear.prototype = Object.create(UI.prototype);
 
 UI.Linear.prototype.show = function(parent) {
 	UI.prototype.show.call(this, parent);
-
-	parent.appendChild(this._a);
-	parent.appendChild(this._b);
-	parent.appendChild(this._apply);
-	if (this._photo.hasAction(this._action)) { parent.appendChild(this._delete); }
-
-	this._preview();
+	
+	var canvas = this._photo.getCanvas(this._action);
+	canvas = App.preview.draw(canvas, true); /* create preview canvas */
+	var histogram = new Action.Histogram();
+	
+	histogram.go(canvas).then(this._show.bind(this));
 }
 
 UI.Linear.prototype.handleEvent = function(e) {
@@ -45,4 +44,15 @@ UI.Linear.prototype.handleEvent = function(e) {
 			}
 		break;
 	}
+}
+
+UI.Linear.prototype._show = function(hist) {
+	var h = Action.Histogram.draw(hist, 256*1.5, 100);
+	this._parent.appendChild(h);
+	this._parent.appendChild(this._a);
+	this._parent.appendChild(this._b);
+	this._parent.appendChild(this._apply);
+	if (this._photo.hasAction(this._action)) { this._parent.appendChild(this._delete); }
+
+	this._preview();
 }

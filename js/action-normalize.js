@@ -7,7 +7,7 @@ Action.Normalize.prototype = Object.create(Action.prototype);
 
 Action.Normalize.prototype.go = function(canvas) {
 	var promise = Action.prototype.go.call(this, canvas);
-	var id = App.canvasToImageData(canvas);
+	var id = this._canvasToImageData(canvas);
 
 	var count = id.width*id.height;
 	var min = 255;

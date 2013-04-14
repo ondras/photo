@@ -7,7 +7,7 @@ Action.Invert.prototype = Object.create(Action.prototype);
 
 Action.Invert.prototype.go = function(canvas) {
 	var promise = Action.prototype.go.call(this, canvas);
-	var id = App.canvasToImageData(canvas);
+	var id = this._canvasToImageData(canvas);
 
 	var def = {};
 	if (this._options.r) { 
