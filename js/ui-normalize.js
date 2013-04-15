@@ -29,12 +29,14 @@ UI.Normalize.prototype.show = function(parent) {
 	var parent = document.createElement("div");
 	parent.className = "slider";
 	parent.style.width = this._width+"px";
+	parent.style.display = "inline-block";
 	parent.appendChild(this._arrow);
 
 	this._parent.appendChild(document.createTextNode("Padding: "));
 	this._parent.appendChild(parent);
-
+	this._parent.appendChild(this._apply);
 	if (this._photo.hasAction(this._action)) { this._parent.appendChild(this._delete); }
+
 	this._padding.setValue(this._action.getOptions().padding);
 
 	this._preview();
