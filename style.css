@@ -65,14 +65,19 @@ html, body {
 	font-weight: bold;
 }
 
-#config .histogram {
+#config .slider {
 	position: relative;
 	padding-bottom: 1px;
 	border-bottom: 1px solid #888;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
 }
 
-#config .histogram canvas {
+#config .slider span {
+	position: absolute;
+	bottom: -15px;
+}
+
+#config .slider canvas {
 	display: block;
 }
 

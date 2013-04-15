@@ -8,13 +8,9 @@ UI.Linear = function(action, photo) {
 
 	this._arrowBlack = document.createElement("span");
 	this._arrowBlack.innerHTML = "▲";
-	this._arrowBlack.style.position = "absolute";
-	this._arrowBlack.style.bottom = "-15px";
 
 	this._arrowWhite = document.createElement("span");
 	this._arrowWhite.innerHTML = "△";
-	this._arrowWhite.style.position = "absolute";
-	this._arrowWhite.style.bottom = "-15px";
 
 	var opts = {
 		min: 0,
@@ -63,9 +59,10 @@ UI.Linear.prototype.handleEvent = function(e) {
 
 UI.Linear.prototype._show = function(hist) {
 	var parent = document.createElement("div");
-	parent.className = "histogram";
+	parent.className = "slider";
+	parent.style.width = this._histogramWidth + "px";
 
-	var h = Action.Histogram.draw(hist, 256*1.5, 100);
+	var h = Action.Histogram.draw(hist, this._histogramWidth, 100);
 	parent.appendChild(h);
 	parent.appendChild(this._arrowWhite);
 	parent.appendChild(this._arrowBlack);

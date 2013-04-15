@@ -2,10 +2,20 @@ UI.Normalize = function(action, photo) {
 	UI.call(this, action, photo);
 
 	var options = action.getOptions();
-	this._padding = document.createElement("input");
-	this._padding.size = 3;
-	this._padding.value = options.padding;
-	this._padding.addEventListener("change", this);
+
+	this._arrow = document.createElement("span");
+	this._arrow.innerHTML = "▲";
+
+	this._width = 50;
+
+	var opts = {
+		min: 0,
+		max: this._width,
+		step: 1,
+		width: this._width
+	}
+	this._padding = new Slider(this._arrow, opts);
+	this._padding.onchange = this;
 
 	this._buildApply();
 	this._buildDelete();
@@ -16,9 +26,16 @@ UI.Normalize.prototype = Object.create(UI.prototype);
 UI.Normalize.prototype.show = function(parent) {
 	UI.prototype.show.call(this, parent);
 
-	parent.appendChild(this._padding);
-	parent.appendChild(this._apply);
-	if (this._photo.hasAction(this._action)) { parent.appendChild(this._delete); }
+	var parent = document.createElement("div");
+	parent.className = "slider";
+	parent.style.width = this._width+"px";
+	parent.appendChild(this._arrow);
+
+	this._parent.appendChild(document.createTextNode("Padding: "));
+	this._parent.appendChild(parent);
+
+	if (this._photo.hasAction(this._action)) { this._parent.appendChild(this._delete); }
+	this._padding.setValue(this._action.getOptions().padding);
 
 	this._preview();
 }
@@ -35,7 +52,7 @@ UI.Normalize.prototype.handleEvent = function(e) {
 
 		case "change":
 			var options = this._action.getOptions();
-			options.padding = parseInt(this._padding.value);
+			options.padding = this._padding.getValue();
 			this._action.setOptions(options);
 			this._preview();
 		break;
