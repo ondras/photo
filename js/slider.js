@@ -1,6 +1,7 @@
 var Slider = function(node, options) {
+	this.onchange = null;
 	this._node = node;
-	this._nodeWidth = node.offsetWidth;
+	this._node.style.cursor = "move";
 	this._left = null;
 	
 	this._clientX = null;
@@ -10,7 +11,8 @@ var Slider = function(node, options) {
 		width: 150,
 		min: 0,
 		max: 100,
-		value: 50
+		value: 50,
+		step: 1
 	}
 	for (var p in options) { this._options[p] = options[p]; }
 	this.setValue(this._options.value);
@@ -19,12 +21,13 @@ var Slider = function(node, options) {
 }
 
 Slider.prototype.getValue = function() {
-	return this._value;
+	return this._leftToValue(this._left);
 }
 
 Slider.prototype.setValue = function(value) {
 	this._left = this._valueToLeft(value);
 	this._node.style.left = this._left + "px";
+	this._node.title = value;
 }
 
 Slider.prototype.handleEvent = function(e) {
@@ -40,7 +43,11 @@ Slider.prototype.handleEvent = function(e) {
 		case "mousemove":
 			var dx = e.clientX - this._clientX;
 			var newValue = this._leftToValue(this._startLeft + dx);
-			if (newValue < this._options.min || newValue > this._options.max) { return; }
+			if (newValue < this._options.min || newValue > this._options.max) { 
+				newValue = Math.max(newValue, this._options.min);
+				newValue = Math.min(newValue, this._options.max);
+				dx = this._valueToLeft(newValue) - this._startLeft;
+			}
 			this._left = this._startLeft + dx;
 			this._node.style.left = this._left+"px";
 		break;
@@ -49,6 +56,7 @@ Slider.prototype.handleEvent = function(e) {
 			document.removeEventListener("mousemove", this);
 			document.removeEventListener("mouseup", this);
 			this.setValue(this._leftToValue(this._left));
+			if (this.onchange) { this.onchange.handleEvent({type:"change", target:this}); }
 		break;
 	}
 }
@@ -57,12 +65,16 @@ Slider.prototype._valueToLeft = function(value) {
 	var diff = value-this._options.min;
 	var step = this._options.width/(this._options.max-this._options.min);
 	var center = diff*step;
-	return center - this._nodeWidth/2;
+	return Math.round(center - this._node.offsetWidth/2);
 }
 
 Slider.prototype._leftToValue = function(left) {
-	var center = left + this._nodeWidth/2;
+	var center = left + this._node.offsetWidth/2;
 	var step = this._options.width/(this._options.max-this._options.min);
 	var diff = center/step;
-	return this._options.min + diff;
+	var value = this._options.min + diff;
+	if (this._options.step) { /* round to step */
+		value = this._options.step * Math.round(value / this._options.step);
+	}
+	return value;
 }

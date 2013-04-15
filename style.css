@@ -65,6 +65,17 @@ html, body {
 	font-weight: bold;
 }
 
+#config .histogram {
+	position: relative;
+	padding-bottom: 1px;
+	border-bottom: 1px solid #888;
+	margin-bottom: 20px;
+}
+
+#config .histogram canvas {
+	display: block;
+}
+
 #throbber {
 	position: fixed;
 	left: 10px;

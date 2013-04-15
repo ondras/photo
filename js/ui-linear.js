@@ -1,18 +1,32 @@
 UI.Linear = function(action, photo) {
 	UI.call(this, action, photo);
 
+	this._histogramWidth = 256*1.5;
+
 	this._buildApply();
 	this._buildDelete();
 
-	this._a = document.createElement("input");
-	this._a.type = "text";
-	this._a.value = action.getOptions().a;
-	this._a.addEventListener("change", this);
+	this._arrowBlack = document.createElement("span");
+	this._arrowBlack.innerHTML = "▲";
+	this._arrowBlack.style.position = "absolute";
+	this._arrowBlack.style.bottom = "-15px";
 
-	this._b = document.createElement("input");
-	this._b.type = "text";
-	this._b.value = action.getOptions().b;
-	this._b.addEventListener("change", this);
+	this._arrowWhite = document.createElement("span");
+	this._arrowWhite.innerHTML = "△";
+	this._arrowWhite.style.position = "absolute";
+	this._arrowWhite.style.bottom = "-15px";
+
+	var opts = {
+		min: 0,
+		max: 255,
+		step: 1,
+		width: this._histogramWidth
+	}
+	this._white = new Slider(this._arrowWhite, opts);
+	this._black = new Slider(this._arrowBlack, opts);
+
+	this._white.onchange = this;
+	this._black.onchange = this;
 }
 UI.Linear.prototype = Object.create(UI.prototype);
 
@@ -30,8 +44,9 @@ UI.Linear.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
 			var options = this._action.getOptions();
-			options.a = parseFloat(this._a.value);
-			options.b = parseFloat(this._b.value);
+			var ab = this._action.minMaxToAB(this._black.getValue(), this._white.getValue());
+			options.a = ab[0];
+			options.b = ab[1];
 			this._action.setOptions(options);
 			this._preview();
 		break;
@@ -47,21 +62,24 @@ UI.Linear.prototype.handleEvent = function(e) {
 }
 
 UI.Linear.prototype._show = function(hist) {
-	var div = document.createElement("div");
-	var span = document.createElement("span");
-	span.innerHTML = "A";
-	span.style.position = "absolute";
-	div.appendChild(span);
-	this._parent.appendChild(div);
-	new Slider(span);
+	var parent = document.createElement("div");
+	parent.className = "histogram";
 
 	var h = Action.Histogram.draw(hist, 256*1.5, 100);
-	this._parent.appendChild(h);
-	this._parent.appendChild(this._a);
-	this._parent.appendChild(this._b);
+	parent.appendChild(h);
+	parent.appendChild(this._arrowWhite);
+	parent.appendChild(this._arrowBlack);
+
+	this._parent.appendChild(parent);
+
 	this._parent.appendChild(this._apply);
 	if (this._photo.hasAction(this._action)) { this._parent.appendChild(this._delete); }
 	
+	var options = this._action.getOptions();
+	var minmax = this._action.abToMinMax(options.a, options.b);
+
+	this._black.setValue(minmax[0]);
+	this._white.setValue(minmax[1]);
 
 	this._preview();
 }

@@ -1,9 +1,8 @@
 - FIXMEs
 - crop
-- interactive histogram
 - color balance
 - locking
-- input type range
+- range for normalize padding
 - load clipboard
 - actions use cloned options
 - bug absolute resize preview

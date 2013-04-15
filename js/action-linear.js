@@ -23,7 +23,15 @@ Action.Linear.prototype.go = function(canvas) {
 
 Action.Linear.prototype._defaultOptions = function() {
 	return {
-		a: 0.6,
+		a: 1,
 		b: 0
 	};
+}
+
+Action.Linear.prototype.abToMinMax = function(a, b) {
+	return [Math.round(-b/a),  Math.round((255-b)/a)];
+}
+
+Action.Linear.prototype.minMaxToAB = function(min, max) {
+	return [255/(max-min), 255*min/(min-max)];
 }
