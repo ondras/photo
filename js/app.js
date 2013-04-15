@@ -56,7 +56,7 @@ var App = {
 	},
 	
 	showUI: function(ui) {
-		if (this._ui) { this._ui.hide(); } /* FIXME test & check */
+		if (this._ui) { this._ui.hide(); }
 		this._ui = ui;
 		if (this._ui) { this._ui.show(this._config); }
 		return this;

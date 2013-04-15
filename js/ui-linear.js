@@ -18,8 +18,8 @@ UI.Linear = function(action, photo) {
 		step: 1,
 		width: this._histogramWidth
 	}
-	this._white = new Slider(this._arrowWhite, opts);
-	this._black = new Slider(this._arrowBlack, opts);
+	this._white = new Slider(this._arrowWhite, null, opts);
+	this._black = new Slider(this._arrowBlack, null, opts);
 
 	this._white.onchange = this;
 	this._black.onchange = this;

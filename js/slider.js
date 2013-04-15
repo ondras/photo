@@ -1,6 +1,7 @@
-var Slider = function(node, options) {
+var Slider = function(node, input, options) {
 	this.onchange = null;
 	this._node = node;
+	this._input = input;
 	this._node.style.cursor = "move";
 	this._left = null;
 	
@@ -18,6 +19,7 @@ var Slider = function(node, options) {
 	this.setValue(this._options.value);
 	
 	this._node.addEventListener("mousedown", this);
+	if (this._input) { this._input.addEventListener("change", this); }
 }
 
 Slider.prototype.getValue = function() {
@@ -25,6 +27,7 @@ Slider.prototype.getValue = function() {
 }
 
 Slider.prototype.setValue = function(value) {
+	if (this._input) { this._input.value = value; }
 	this._left = this._valueToLeft(value);
 	this._node.style.left = this._left + "px";
 	this._node.title = value;
@@ -48,6 +51,7 @@ Slider.prototype.handleEvent = function(e) {
 				newValue = Math.min(newValue, this._options.max);
 				dx = this._valueToLeft(newValue) - this._startLeft;
 			}
+			if (this._input) { this._input.value = newValue; }
 			this._left = this._startLeft + dx;
 			this._node.style.left = this._left+"px";
 		break;
@@ -56,6 +60,17 @@ Slider.prototype.handleEvent = function(e) {
 			document.removeEventListener("mousemove", this);
 			document.removeEventListener("mouseup", this);
 			this.setValue(this._leftToValue(this._left));
+			if (this.onchange) { this.onchange.handleEvent({type:"change", target:this}); }
+		break;
+		
+		case "change":
+			var value = parseFloat(this._input.value); 
+			if (this._options.step) { /* round to step */
+				value = this._options.step * Math.round(value / this._options.step);
+			}
+			value = Math.max(value, this._options.min);
+			value = Math.min(value, this._options.max);
+			this.setValue(value);
 			if (this.onchange) { this.onchange.handleEvent({type:"change", target:this}); }
 		break;
 	}

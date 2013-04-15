@@ -14,6 +14,16 @@ UI.Open = function(action) {
 	this._inputURLbutton.value = "Load";
 	this._inputURLbutton.addEventListener("click", this);
 	this._row2 = this._buildRow("URL:", this._inputURL, this._inputURLbutton);
+
+	this._inputClipboard = document.createElement("div");
+	this._inputClipboard.innerHTML = "&nbsp;";
+	this._inputClipboard.style.display = "inline-block";
+	this._inputClipboard.style.width = "20px";
+	this._inputClipboard.style.border = "2px solid #000";
+	this._inputClipboard.style.cursor = "pointer";
+	this._inputClipboard.contentEditable = true;
+	this._inputClipboard.addEventListener("keyup", this);
+	this._row3 = this._buildRow("Paste:", this._inputClipboard);
 }
 UI.Open.prototype = Object.create(UI.prototype);
 
@@ -23,6 +33,8 @@ UI.Open.prototype.show = function(parent) {
 	parent.appendChild(this._row1);
 	parent.appendChild(document.createElement("br"));
 	parent.appendChild(this._row2);
+	parent.appendChild(document.createElement("br"));
+	parent.appendChild(this._row3);
 }
 
 UI.Open.prototype.handleEvent = function(e) {
@@ -37,6 +49,17 @@ UI.Open.prototype.handleEvent = function(e) {
 			this._action.openFile(e.target.files[0]).then(function(photo) {
 				App.setPhoto(photo);
 			});
+		break;
+
+		case this._inputClipboard:
+			var content = this._inputClipboard.innerHTML;
+			this._inputClipboard.innerHTML = "&nbsp;";
+			var re = content.match(/src=['"](data:image[^'"]+)/);
+			if (re) {
+				this._action.openURL(re[1]).then(function(photo) {
+					App.setPhoto(photo);
+				});
+			}
 		break;
 	}
 }
