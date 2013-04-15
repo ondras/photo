@@ -47,12 +47,21 @@ UI.Linear.prototype.handleEvent = function(e) {
 }
 
 UI.Linear.prototype._show = function(hist) {
+	var div = document.createElement("div");
+	var span = document.createElement("span");
+	span.innerHTML = "A";
+	span.style.position = "absolute";
+	div.appendChild(span);
+	this._parent.appendChild(div);
+	new Slider(span);
+
 	var h = Action.Histogram.draw(hist, 256*1.5, 100);
 	this._parent.appendChild(h);
 	this._parent.appendChild(this._a);
 	this._parent.appendChild(this._b);
 	this._parent.appendChild(this._apply);
 	if (this._photo.hasAction(this._action)) { this._parent.appendChild(this._delete); }
+	
 
 	this._preview();
 }
