@@ -32,23 +32,14 @@ UI.Scale.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
 			this._syncInputs(e);
-
-			var options = this._action.getOptions();
-			options.units = this._units.value;
-			options.smooth = this._smooth.checked;
-			if (this._units.value == "abs") {
-				options.width = parseFloat(this._width.value);
-				options.height = parseFloat(this._height.value);
-			} else {
-				options.width = parseFloat(this._width.value)/100;
-				options.height = parseFloat(this._height.value)/100;
-			}
-			this._action.setOptions(options);
+			
+			this._applyToOptions();
 			this._preview();
 		break;
 
 		case "click":
 			if (e.target == this._apply) {
+				this._applyToOptions();
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -154,4 +145,32 @@ UI.Scale.prototype._getSize = function() {
 	var canvas = this._photo.getCanvas(this._action);
 	this._size[0] = canvas.width;
 	this._size[1] = canvas.height;
+}
+
+UI.Scale.prototype._applyToOptions = function() {
+	var options = this._action.getOptions();
+	options.units = this._units.value;
+	options.smooth = this._smooth.checked;
+	if (this._units.value == "abs") {
+		options.width = parseFloat(this._width.value);
+		options.height = parseFloat(this._height.value);
+	} else {
+		options.width = parseFloat(this._width.value)/100;
+		options.height = parseFloat(this._height.value)/100;
+	}
+	this._action.setOptions(options);
+}
+
+UI.Scale.prototype._preview = function() {
+	var scale = App.preview.getScale();
+	
+	var options = this._action.getOptions();
+	
+	if (options.units == "abs") { /* scale to match preview size */
+		options.width *= scale;
+		options.height *= scale;
+		this._action.setOptions(options);
+	}
+	
+	UI.prototype._preview.call(this);
 }

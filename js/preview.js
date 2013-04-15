@@ -108,6 +108,10 @@ Preview.prototype.computeZoom = function(canvas) {
 	this._setZoom(index);
 }
 
+Preview.prototype.getScale = function() {
+	return this._zooms[this._zoomIndex].scale;
+}
+
 Preview.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "wheel":
