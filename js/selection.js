@@ -32,15 +32,18 @@ Selection.prototype.setPosition = function(x, y, w, h) {
 	this._redraw();
 }
 
+Selection.prototype.getPosition = function() {
+	return this._position.concat(this._size);
+}
+
 Selection.prototype.handleEvent = function(e) {
 	e.stopPropagation();
 	e.preventDefault();
 
 	switch (e.type) {
 		case "mousedown":
-			this._drag.addEventListener("mousemove", this);
-			this._drag.addEventListener("mouseup", this);
-			this._drag.addEventListener("mouseout", this);
+			document.addEventListener("mousemove", this);
+			document.addEventListener("mouseup", this);
 			this._event.x = e.clientX;
 			this._event.y = e.clientY;
 		break;
@@ -55,9 +58,8 @@ Selection.prototype.handleEvent = function(e) {
 		break;
 
 		case "mouseup":
-			this._drag.removeEventListener("mousemove", this);
-			this._drag.removeEventListener("mouseup", this);
-			this._drag.removeEventListener("mouseout", this);
+			document.removeEventListener("mousemove", this);
+			document.removeEventListener("mouseup", this);
 		break;
 	}
 }
@@ -98,5 +100,5 @@ Selection.prototype._tryMove = function(deltas) {
 
 	this._redraw();
 
-	if (this.onchange) { this.onchange.handleEvent({targe:this, type:"change"}); }
+	if (this.onchange) { this.onchange.handleEvent({target:this, type:"change"}); }
 }

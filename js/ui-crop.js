@@ -3,6 +3,7 @@ UI.Crop = function(action, photo) {
 
 	this._size = [null, null];
 	this._selection = new Selection();
+	this._selection.onchange = this;
 
 	this._build();
 }
@@ -44,8 +45,17 @@ UI.Crop.prototype.hide = function() {
 UI.Crop.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
-			this._syncInputs(e);
-			this._preview();
+			if (e.target == this._selection) {
+				var data = this._selection.getPosition();
+				var scale = App.preview.getScale();
+				this._x.value = Math.round(data[0]/scale);
+				this._y.value = Math.round(data[1]/scale);
+				this._w.value = Math.round(data[2]/scale);
+				this._h.value = Math.round(data[3]/scale);
+			} else {
+				this._syncInputs(e);
+				this._preview();
+			}
 		break;
 
 		case "click":
