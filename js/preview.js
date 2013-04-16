@@ -39,11 +39,11 @@ var Preview = function(node) {
 	}
 
 	this._node.addEventListener("wheel", this);
-	this._canvas.addEventListener("mousewheel", this);
-	this._canvas.addEventListener("mousedown", this);
-	this._canvas.addEventListener("mousemove", this);
-	this._canvas.addEventListener("mouseup", this);
-	this._canvas.addEventListener("mouseout", this);
+	this._node.addEventListener("mousewheel", this);
+	this._content.addEventListener("mousedown", this);
+	this._content.addEventListener("mousemove", this);
+	this._content.addEventListener("mouseup", this);
+	this._content.addEventListener("mouseout", this);
 }
 
 /**

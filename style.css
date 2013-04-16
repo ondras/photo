@@ -99,6 +99,10 @@ html, body {
 	position: relative;
 }
 
+#preview :first-child {
+	cursor: move;
+}
+
 #preview #zoom {
 	position: fixed;
 	left: 405px;
@@ -110,7 +114,6 @@ html, body {
 }
 
 #preview canvas {
-	cursor: move;
 	display: block;
 }
 
