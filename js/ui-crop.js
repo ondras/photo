@@ -11,8 +11,21 @@ UI.Crop.prototype = Object.create(UI.prototype);
 UI.Crop.prototype.show = function(parent) {
 	UI.prototype.show.call(this, parent);
 
+	if (!this._photo.hasAction(this._action)) { /* configure defaults */
+		var canvas = this._photo.getCanvas(this._action);
+		var options = {
+			x: Math.round(canvas.width/5),
+			y: Math.round(canvas.height/5),
+			w: Math.round(canvas.width*3/5),
+			h: Math.round(canvas.height*3/5)
+		}
+		this._action.setOptions(options);
+	}
+
 	App.preview.showSelection(this._selection);
 	parent.appendChild(this._table);
+	parent.appendChild(this._apply);
+	this._delete.style.display = (this._photo.hasAction(this._action) ? "" : "none");
 
 	var options = this._action.getOptions();
 	this._x.value = options.x;
@@ -20,8 +33,6 @@ UI.Crop.prototype.show = function(parent) {
 	this._w.value = options.w;
 	this._h.value = options.h;
 
-	parent.appendChild(this._apply);
-	this._delete.style.display = (this._photo.hasAction(this._action) ? "" : "none");
 	this._preview();
 }
 
@@ -59,7 +70,7 @@ UI.Crop.prototype._build = function() {
 	this._w = this._buildInput();
 	this._h = this._buildInput();
 
-	this._table.appendChild(this._buildRow("Position:", this._x, ",", this._y));
+	this._table.appendChild(this._buildRow("Position:", this._x, ", ", this._y));
 	this._table.appendChild(this._buildRow("Size:", this._w, "×", this._h));
 }
 

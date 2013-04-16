@@ -127,11 +127,12 @@ Preview.prototype.hideSelection = function(selection) {
 }
 
 Preview.prototype.handleEvent = function(e) {
+	e.preventDefault();
+
 	switch (e.type) {
 		case "wheel":
 		case "mousewheel":
 			if (!e.ctrlKey && !e.shiftKey) { return; }
-			e.preventDefault();
 
 			var dir = 1;
 			if (e.wheelDelta && e.wheelDelta < 0) { dir = -1; }
@@ -141,7 +142,6 @@ Preview.prototype.handleEvent = function(e) {
 		break;
 
 		case "mousedown":
-			e.preventDefault();
 			this._pan.active = true;
 			this._pan.x = e.clientX;
 			this._pan.y = e.clientY;
