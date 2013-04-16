@@ -5,12 +5,13 @@ Action.Linear = function() {
 }
 Action.Linear.prototype = Object.create(Action.prototype);
 
-Action.Linear.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Linear.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
 	var id = this._canvasToImageData(canvas);
+	var o = this._mergeOptions(options);
 
-	var a = this._options.a;
-	var b = this._options.b;
+	var a = o.a;
+	var b = o.b;
 	var def = {
 		r: {a:a, b:b},
 		g: {a:a, b:b},

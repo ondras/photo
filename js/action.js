@@ -9,15 +9,15 @@ Action.prototype.getName = function() {
 }
 
 Action.prototype.setOptions = function(options) {
-	for (var p in options) { this._options[p] = options[p]; }
-		return this;
+	this._options = this._mergeOptions(options);
+	return this;
 }
 
 Action.prototype.getOptions = function(options) {
 	return this._options;
 }
 
-Action.prototype.go = function(canvas) {
+Action.prototype.go = function(canvas, options) {
 	var promise = new Promise();
 	return promise;
 }
@@ -45,4 +45,11 @@ Action.prototype._imageDataToCanvas = function(id) {
 	canvas.height = id.height;
 	canvas.getContext("2d").putImageData(id, 0, 0);
 	return canvas;
+}
+
+Action.prototype._mergeOptions = function(options) {
+	var o = {};
+	for (var p in this._options) { o[p] = this._options[p]; }
+	for (var p in options) { o[p] = options[p]; }
+	return o;
 }

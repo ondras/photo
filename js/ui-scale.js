@@ -1,9 +1,5 @@
 UI.Scale = function(action, photo) {
 	UI.call(this, action, photo);
-
-	this._size = [null, null];
-	this._getSize();
-
 	this._build();
 }
 UI.Scale.prototype = Object.create(UI.prototype);
@@ -32,14 +28,12 @@ UI.Scale.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
 			this._syncInputs(e);
-			
-			this._applyToOptions();
 			this._preview();
 		break;
 
 		case "click":
 			if (e.target == this._apply) {
-				this._applyToOptions();
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -103,7 +97,10 @@ UI.Scale.prototype._build = function() {
 
 UI.Scale.prototype._syncInputs = function(e) {
 	var aspect = this._aspect.checked;
-	var ratio = this._size[0]/this._size[1];
+	var canvas = this._photo.getCanvas(this._action);
+	var cwidth = canvas.width;
+	var cheight = canvas.height;
+	var ratio = cwidth/cheight;
 
 	switch (e.target) {
 		case this._aspect:
@@ -113,11 +110,11 @@ UI.Scale.prototype._syncInputs = function(e) {
 
 		case this._units:
 			if (this._units.value == "abs") { /* rel => abs */
-				this._width.value = this._size[0] * parseFloat(this._width.value) / 100;
-				this._height.value = this._size[1] * parseFloat(this._height.value) / 100;
+				this._width.value = cwidth * parseFloat(this._width.value) / 100;
+				this._height.value = cheight * parseFloat(this._height.value) / 100;
 			} else { /* abs => rel */
-				this._width.value = 100 * parseFloat(this._width.value) / this._size[0];
-				this._height.value = 100 * parseFloat(this._height.value) / this._size[1];
+				this._width.value = 100 * parseFloat(this._width.value) / cwidth;
+				this._height.value = 100 * parseFloat(this._height.value) / cheight;
 			}
 		break;
 
@@ -141,14 +138,25 @@ UI.Scale.prototype._syncInputs = function(e) {
 	}
 }
 
-UI.Scale.prototype._getSize = function() {
+UI.Scale.prototype._preview = function() {
+	var options = this._getOptions();
+	var scale = App.preview.getScale();
+	
+	if (options.units == "abs") { /* scale to match preview size */
+		options.width *= scale;
+		options.height *= scale;
+	}
+
 	var canvas = this._photo.getCanvas(this._action);
-	this._size[0] = canvas.width;
-	this._size[1] = canvas.height;
+	canvas = App.preview.draw(canvas, true); /* create preview canvas */
+
+	this._action.go(canvas, options).then(function(canvas) {
+		App.preview.draw(canvas, false); /* draw preview canvas */
+	});
 }
 
-UI.Scale.prototype._applyToOptions = function() {
-	var options = this._action.getOptions();
+UI.Scale.prototype._getOptions = function() {
+	var options = {};
 	options.units = this._units.value;
 	options.smooth = this._smooth.checked;
 	if (this._units.value == "abs") {
@@ -158,19 +166,5 @@ UI.Scale.prototype._applyToOptions = function() {
 		options.width = parseFloat(this._width.value)/100;
 		options.height = parseFloat(this._height.value)/100;
 	}
-	this._action.setOptions(options);
-}
-
-UI.Scale.prototype._preview = function() {
-	var scale = App.preview.getScale();
-	
-	var options = this._action.getOptions();
-	
-	if (options.units == "abs") { /* scale to match preview size */
-		options.width *= scale;
-		options.height *= scale;
-		this._action.setOptions(options);
-	}
-	
-	UI.prototype._preview.call(this);
+	return options;
 }

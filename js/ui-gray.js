@@ -28,17 +28,12 @@ UI.Gray.prototype.show = function(parent) {
 UI.Gray.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
-			var options = this._action.getOptions();
-			for (var i=0;i<this._modes.length;i++) {
-				var input = this._modes[i].querySelector("input");
-				if (input.checked) { options.mode = parseInt(input.value); }
-			}
-			this._action.setOptions(options);
 			this._preview();
 		break;
 
 		case "click":
 			if (e.target == this._apply) {
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -60,4 +55,13 @@ UI.Gray.prototype._buildItem = function(value, label, checked) {
 
 	input.addEventListener("change", this);
 	return result;
+}
+
+UI.Gray.prototype._getOptions = function() {
+	var o = {};
+	for (var i=0;i<this._modes.length;i++) {
+		var input = this._modes[i].querySelector("input");
+		if (input.checked) { o.mode = parseInt(input.value); }
+	}
+	return o;
 }

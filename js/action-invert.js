@@ -5,18 +5,19 @@ Action.Invert = function(options) {
 }
 Action.Invert.prototype = Object.create(Action.prototype);
 
-Action.Invert.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Invert.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
 	var id = this._canvasToImageData(canvas);
+	var o = this._mergeOptions(options);
 
 	var def = {};
-	if (this._options.r) { 
+	if (o.r) { 
 		def.r = {a:-1, b:255}
 	}
-	if (this._options.g) { 
+	if (o.g) { 
 		def.g = {a:-1, b:255}
 	}
-	if (this._options.b) { 
+	if (o.b) { 
 		def.b = {a:-1, b:255}
 	}
 

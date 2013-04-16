@@ -1,12 +1,17 @@
 var Preview = function(node) {
 	this._node = node;
+
+	this._content = document.createElement("div");
+	this._content.style.position = "absolute";
+
 	this._canvas = document.createElement("canvas");
-	this._canvas.style.position = "absolute";
 	this._canvas.title = "(ctrl-wheel or shift-wheel to zoom)";
-	this._node.appendChild(this._canvas);
+	this._content.appendChild(this._canvas);
 
 	this._zoom = document.createElement("div");
 	this._zoom.id = "zoom";
+
+	this._node.appendChild(this._content);
 	this._node.appendChild(this._zoom);
 
 	this._zooms = [
@@ -33,7 +38,7 @@ var Preview = function(node) {
 		active: false
 	}
 
-	this._canvas.addEventListener("wheel", this);
+	this._node.addEventListener("wheel", this);
 	this._canvas.addEventListener("mousewheel", this);
 	this._canvas.addEventListener("mousedown", this);
 	this._canvas.addEventListener("mousemove", this);
@@ -67,8 +72,8 @@ Preview.prototype.draw = function(canvas, autoScale) {
 		this._canvas.height = height;
 		var left = (width > availWidth ? 0 : (availWidth-width)/2);
 		var top = (height > availHeight ? 0 : (availHeight-height)/2);
-		this._canvas.style.left = Math.round(left) + "px";
-		this._canvas.style.top = Math.round(top) + "px";
+		this._content.style.left = Math.round(left) + "px";
+		this._content.style.top = Math.round(top) + "px";
 
 		/* scroll to center */
 		this._node.scrollLeft = Math.round((width-availWidth)/2);
@@ -110,6 +115,15 @@ Preview.prototype.computeZoom = function(canvas) {
 
 Preview.prototype.getScale = function() {
 	return this._zooms[this._zoomIndex].scale;
+}
+
+Preview.prototype.showSelection = function(selection) {
+	this._content.appendChild(selection.getContainer());
+}
+
+Preview.prototype.hideSelection = function(selection) {
+	var cont = selection.getContainer();
+	cont.parentNode.removeChild(cont);
 }
 
 Preview.prototype.handleEvent = function(e) {

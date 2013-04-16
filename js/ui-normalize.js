@@ -1,13 +1,12 @@
 UI.Normalize = function(action, photo) {
 	UI.call(this, action, photo);
 
+	this._width = 50;
 	this._arrow = document.createElement("span");
 	this._arrow.innerHTML = "▲";
 	this._padding = document.createElement("input");
 	this._padding.type = "text";
 	this._padding.size = 2;
-
-	this._width = 50;
 
 	var opts = {
 		min: 0,
@@ -52,6 +51,7 @@ UI.Normalize.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "click":
 			if (e.target == this._apply) {
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -59,10 +59,11 @@ UI.Normalize.prototype.handleEvent = function(e) {
 		break;
 
 		case "change":
-			var options = this._action.getOptions();
-			options.padding = this._slider.getValue();
-			this._action.setOptions(options);
 			this._preview();
 		break;
 	}
+}
+
+UI.Normalize.prototype._getOptions = function() {
+	return {padding:this._slider.getValue()};
 }

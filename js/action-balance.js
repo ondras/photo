@@ -5,11 +5,11 @@ Action.Balance = function() {
 }
 Action.Balance.prototype = Object.create(Action.prototype);
 
-Action.Balance.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Balance.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
 	var id = this._canvasToImageData(canvas);
 
-	var o = this._options;
+	var o = this._mergeOptions(options);
 	var def = {
 		r: {a:1, b:o.r - o.g/2 - o.b/2},
 		g: {a:1, b:o.g - o.r/2 - o.b/2},

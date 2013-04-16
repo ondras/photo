@@ -5,11 +5,12 @@ Action.Gray = function(options) {
 }
 Action.Gray.prototype = Object.create(Action.prototype);
 
-Action.Gray.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Gray.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
 	var id = this._canvasToImageData(canvas);
+	var o = this._mergeOptions(options);
 
-	this._runInWorker(promise, {method:"average", args: [id, this._options.mode]});
+	this._runInWorker(promise, {method:"average", args: [id, o.mode]});
 	return promise;
 }
 

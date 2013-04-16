@@ -5,8 +5,9 @@ Action.Normalize = function() {
 }
 Action.Normalize.prototype = Object.create(Action.prototype);
 
-Action.Normalize.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Normalize.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
+	var options = this._mergeOptions(options);
 	var id = this._canvasToImageData(canvas);
 
 	var count = id.width*id.height;
@@ -23,8 +24,8 @@ Action.Normalize.prototype.go = function(canvas) {
 
 	/* min and max muset be scaled via linear transformation: min => padding, max => 255-padding */
 	if (max != min) {
-		var a = (255 - 2*this._options.padding) / (max - min);
-		var b = this._options.padding - a*min;
+		var a = (255 - 2*options.padding) / (max - min);
+		var b = options.padding - a*min;
 	} else { /* noop */
 		var a = 1;
 		var b = 0;

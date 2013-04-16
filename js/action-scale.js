@@ -5,12 +5,13 @@ Action.Scale = function() {
 }
 Action.Scale.prototype = Object.create(Action.prototype);
 
-Action.Scale.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Scale.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
+	var options = this._mergeOptions(options);
 
-	var width = this._options.width;
-	var height = this._options.height;
-	if (this._options.units == "rel") {
+	var width = options.width;
+	var height = options.height;
+	if (options.units == "rel") {
 		width *= canvas.width;
 		height *= canvas.height;
 	}
@@ -20,9 +21,9 @@ Action.Scale.prototype.go = function(canvas) {
 	result.height = Math.round(height);
 	var context = result.getContext("2d");
 
-	context.webkitImageSmoothingEnabled = this._options.smooth;
-	context.mozImageSmoothingEnabled = this._options.smooth;
-	context.imageSmoothingEnabled = this._options.smooth;
+	context.webkitImageSmoothingEnabled = options.smooth;
+	context.mozImageSmoothingEnabled = options.smooth;
+	context.imageSmoothingEnabled = options.smooth;
 
 	context.drawImage(canvas, 0, 0, result.width, result.height);
 

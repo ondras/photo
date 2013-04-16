@@ -73,6 +73,7 @@ UI.Balance.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "click":
 			if (e.target == this._apply) {
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -80,11 +81,6 @@ UI.Balance.prototype.handleEvent = function(e) {
 		break;
 
 		case "change":
-			var options = this._action.getOptions();
-			options.r = this._sliders[0].getValue();
-			options.g = this._sliders[1].getValue();
-			options.b = this._sliders[2].getValue();
-			this._action.setOptions(options);
 			this._preview();
 		break;
 	}
@@ -93,4 +89,12 @@ UI.Balance.prototype.handleEvent = function(e) {
 UI.Balance.prototype._gradient = function(node, gradient) {
 	node.style.height = "10px";
 	node.style.backgroundImage = "linear-gradient(to right, " + gradient.join(",") + ")";
+}
+
+UI.Balance.prototype._getOptions = function() {
+	return {
+		r: this._sliders[0].getValue(),
+		g: this._sliders[1].getValue(),
+		b: this._sliders[2].getValue()
+	}
 }

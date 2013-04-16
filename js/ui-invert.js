@@ -29,6 +29,7 @@ UI.Invert.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "click":
 			if (e.target == this._apply) {
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -36,12 +37,15 @@ UI.Invert.prototype.handleEvent = function(e) {
 		break;
 
 		case "change":
-			var options = this._action.getOptions();
-			options.r = this._getCheckboxState(this._r);
-			options.g = this._getCheckboxState(this._g);
-			options.b = this._getCheckboxState(this._b);
-			this._action.setOptions(options);
 			this._preview();
 		break;
+	}
+}
+
+UI.Invert.prototype._getOptions = function() {
+	return {
+		r: this._getCheckboxState(this._r),
+		g: this._getCheckboxState(this._g),
+		b: this._getCheckboxState(this._b)
 	}
 }

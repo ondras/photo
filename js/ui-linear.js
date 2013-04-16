@@ -39,16 +39,12 @@ UI.Linear.prototype.show = function(parent) {
 UI.Linear.prototype.handleEvent = function(e) {
 	switch (e.type) {
 		case "change":
-			var options = this._action.getOptions();
-			var ab = this._action.minMaxToAB(this._black.getValue(), this._white.getValue());
-			options.a = ab[0];
-			options.b = ab[1];
-			this._action.setOptions(options);
 			this._preview();
 		break;
 
 		case "click":
 			if (e.target == this._apply) {
+				this._action.setOptions(this._getOptions());
 				this._photo.setAction(this._action);
 			} else if (e.target == this._delete) {
 				this._photo.deleteAction(this._action);
@@ -79,4 +75,10 @@ UI.Linear.prototype._show = function(hist) {
 	this._white.setValue(minmax[1]);
 
 	this._preview();
+}
+
+UI.Linear.prototype._getOptions = function() {
+	var options = this._action.getOptions();
+	var ab = this._action.minMaxToAB(this._black.getValue(), this._white.getValue());
+	return {a:ab[0], b:ab[1]};
 }

@@ -31,7 +31,8 @@ UI.prototype._preview = function() {
 	var canvas = this._photo.getCanvas(this._action);
 	canvas = App.preview.draw(canvas, true); /* create preview canvas */
 
-	this._action.go(canvas).then(function(canvas) {
+	var options = this._getOptions();
+	this._action.go(canvas, options).then(function(canvas) {
 		App.preview.draw(canvas, false); /* draw preview canvas */
 	});
 }
@@ -66,9 +67,20 @@ UI.prototype._buildRow = function(a, b) {
 	var td2 = document.createElement("td");
 
 	if (typeof(a) == "string") { td1.innerHTML = a; } else { td1.appendChild(a); }
-	if (typeof(b) == "string") { td2.innerHTML = b; } else { td2.appendChild(b); }
+
+	for (var i=1;i<arguments.length;i++) {
+		var b = arguments[i];
+		if (typeof(b) == "string") { b = document.createTextNode(b); }
+		td2.appendChild(b);
+	}
+
+
 	row.appendChild(td1);
 	row.appendChild(td2);
 
 	return row;
+}
+
+UI.prototype._getOptions = function() {
+	return {};
 }

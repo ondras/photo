@@ -35,8 +35,8 @@ Action.Histogram.draw = function(data, width, height) {
 	return canvas;
 }
 
-Action.Histogram.prototype.go = function(canvas) {
-	var promise = Action.prototype.go.call(this, canvas);
+Action.Histogram.prototype.go = function(canvas, options) {
+	var promise = Action.prototype.go.call(this, canvas, options);
 	var id = this._canvasToImageData(canvas);
 
 	var data = {method:"histogram", args: [id]};
