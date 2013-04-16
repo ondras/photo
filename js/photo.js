@@ -101,7 +101,7 @@ Photo.prototype.handleEvent = function(e) {
 
 	var action = this._actions[index-2];
 	var name = "";
-	for (var p in Action) { /* fixme bad practice */
+	for (var p in Action) { /* find proper UI */
 		if (action instanceof Action[p]) { name = p; }
 	}
 	var ui = new UI[name](action, this);
