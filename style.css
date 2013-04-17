@@ -99,7 +99,7 @@ html, body {
 	position: relative;
 }
 
-#preview :first-child {
+#preview > :first-child {
 	cursor: move;
 }
 
@@ -125,8 +125,15 @@ html, body {
 	height: 100%;
 }
 
-#preview .selection :first-child {
-	opacity: 0.5;
+#preview .selection > :first-child {
+	opacity: 0.6;
 	width: 100%;
 	height: 100%;
+}
+
+#preview .selection div div {
+	position: absolute;
+	border: 1px dotted #aaa;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
