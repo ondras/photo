@@ -23,6 +23,10 @@ UI.Crop.prototype.show = function(parent) {
 		this._action.setOptions(options);
 	}
 
+	/* create preview canvas. only once, as opposed to other actions (they do it in _preview) */
+	var canvas = this._photo.getCanvas(this._action);
+	canvas = App.preview.draw(canvas, true);
+
 	App.preview.showSelection(this._selection);
 	parent.appendChild(this._table);
 	parent.appendChild(this._apply);
